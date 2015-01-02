@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/yasinaydin/yet-another-express-routing/issues"
   },
-  "homepage": "https://github.com/yasinaydin/yet-another-express-routing"
+  "homepage": "https://github.com/yasinaydin/yet-another-express-routing",
+  "dependencies": {
+    "underscore": "^1.7.0"
+  }
 }
