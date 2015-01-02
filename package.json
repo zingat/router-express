@@ -1,6 +1,6 @@
 {
-  "name": "yet-another-express-routing",
-  "version": "1.0.2",
+  "name": "yet-another-express-router",
+  "version": "1.0.3",
   "description": "Advanced routing for Express",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yasinaydin/yet-another-express-routing"
+    "url": "https://github.com/yasinaydin/yet-another-express-router"
   },
   "keywords": [
     "express",
@@ -21,9 +21,9 @@
   "author": "Ozgur Yasin Aydin",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/yasinaydin/yet-another-express-routing/issues"
+    "url": "https://github.com/yasinaydin/yet-another-express-router/issues"
   },
-  "homepage": "https://github.com/yasinaydin/yet-another-express-routing",
+  "homepage": "https://github.com/yasinaydin/yet-another-express-router",
   "dependencies": {
     "underscore": "^1.7.0"
   }
