@@ -1,6 +1,6 @@
 {
   "name": "yet-another-express-routing",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Advanced routing for Express",
   "main": "index.js",
   "scripts": {
