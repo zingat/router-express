@@ -1,0 +1,27 @@
+{
+  "name": "yet-another-express-routing",
+  "version": "1.0.0",
+  "description": "Advanced routing for Express",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yasinaydin/yet-another-express-routing"
+  },
+  "keywords": [
+    "express",
+    "routing",
+    "router",
+    "resourceful",
+    "reverse",
+    "app"
+  ],
+  "author": "Ozgur Yasin Aydin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yasinaydin/yet-another-express-routing/issues"
+  },
+  "homepage": "https://github.com/yasinaydin/yet-another-express-routing"
+}
