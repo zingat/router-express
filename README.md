@@ -88,3 +88,39 @@ var baseUrl = '/project/search?page=3`;
 var newUrl = router.UpdateUrlWithParam(baseUrl, page); // baseUrl = /project/search
 ```
 
+### Fetching request and default parameters
+
+Normally, `request.params` or `request.query` will provide request parameters. However, in case you need default route parameters, you can use the `FetchRequestAndDefaultParams` function.
+```js
+var routes = [
+  {
+    name: 'routeName',
+    url: '/someUrl',
+    action: /'someAction',
+    params: {
+      param1: { default: 81 }
+  }];
+// When requesting /someUrl?param2=foo
+controllers.someAction (request, response) {
+  var allParams = router.FetchRequestAndDefaultParams(request);
+  // allParams = { param1: 81, param2: 'foo' }
+}
+```
+Note: You can override default parameters if given in the url.
+
+If you specify values for a parameter in `routes` object, the router controls the parameter and if the value of the parameter is not in values array, it reverts to its default value.
+
+```js
+var routes = [
+  {
+    name: 'routeName',
+    url: '/someUrl',
+    action: /'someAction',
+    params: {
+      param1: { values: ['foo', 'bar']; default: 'foo'; }
+}];
+// When requesting /someUrl?param1=baz
+controllers.someAction (request, response) {
+  var allParams = router.FetchRequestAndDefaultParams(request);
+  // allParams = { param1: 'foo' }
+}
