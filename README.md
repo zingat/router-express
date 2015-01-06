@@ -41,7 +41,7 @@ var routerexpress = require('router-express');
 var router = new routerexpress(routes, actions);
 
 // Apply route
-router.pply(app);
+router.apply(app);
 ```
 
 ### Advanced features
