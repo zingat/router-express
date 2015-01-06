@@ -10,11 +10,11 @@ var url      = require('url');
  * Initializes router
  *
  * @constructor
- * @this {YaeRouter}
+ * @this {RouterExpress}
  * @param {object} routes Route object
  * @param {object} controller Controller object
  */
-function YaeRouter (routes, controller) {
+function RouterExpress (routes, controller) {
 	this.controller = controller;
 	this.routes = routes;
 }
@@ -24,10 +24,10 @@ function YaeRouter (routes, controller) {
 /**
  * Applies routing table to Express App
  *
- * @this {YaeRouter}
+ * @this {RouterExpress}
  * @param {object} expressApp Express application
  */
-YaeRouter.prototype.apply = function (expressApp) {
+RouterExpress.prototype.apply = function (expressApp) {
 	for (var i=0; i<this.routes.length; i++) {
 		var route = this.routes[i];
 
@@ -46,14 +46,14 @@ YaeRouter.prototype.apply = function (expressApp) {
 /**
  * Creates a URL based on route name and parameters
  *
- * @this {YaeRouter}
+ * @this {RouterExpress}
  * @param {string} routeName Name of the route
  * @param {object} params Parameters object
  * @returns {string} Created url
  *
  * @TODO: Will use url lib to create urls instead
  */
-YaeRouter.prototype.createUrl = function (routeName, params) {
+RouterExpress.prototype.createUrl = function (routeName, params) {
 	// Get url structure from routing file
 	var route = _.findWhere(this.routes, {name: routeName});
 	var url = route.url;
@@ -99,13 +99,13 @@ YaeRouter.prototype.createUrl = function (routeName, params) {
  * Updates a url based on a parameter and its value
  * If no value specified, the parameter is removed from url
  *
- * @this {YaeRouter}
+ * @this {RouterExpress}
  * @param {string} baseurl The url to update
  * @param {string} param Name of the parameter to update
  * @param {primitive} value Value of the parameter, empty if to remove parameter
  * @returns {string} New url
  */
-YaeRouter.prototype.updateUrlWithParam = function (baseurl, param, value) {
+RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value) {
 	var parsedUrl = url.parse(baseurl,true);
 	var query = parsedUrl.query;
 	var pathname = parsedUrl.pathname;
@@ -132,11 +132,11 @@ YaeRouter.prototype.updateUrlWithParam = function (baseurl, param, value) {
  * If values exist in route object, compares request param
  *   and if not valid, overrides with default value
  *
- * @this {YaeRouter}
+ * @this {RouterExpress}
  * @param {object} request Express request object
  * @returns {object} Parameters object
  */
-YaeRouter.prototype.fetchRequestAndDefaultParams = function (request) {
+RouterExpress.prototype.fetchRequestAndDefaultParams = function (request) {
 	var results = {};
 
 	// Get all request query parameters
@@ -182,11 +182,11 @@ YaeRouter.prototype.fetchRequestAndDefaultParams = function (request) {
 /**
  * Finds a route from routes object
  *
- * @this {YaeRouter}
+ * @this {RouterExpress}
  * @param {object} request Express request object
  * @returns {object} Parameters object
  */
-YaeRouter.prototype.getRouteObjectFromRequest = function (request) {
+RouterExpress.prototype.getRouteObjectFromRequest = function (request) {
 	// Get base pathname
 	var pathname = request._parsedUrl.pathname;
 
@@ -199,14 +199,14 @@ YaeRouter.prototype.getRouteObjectFromRequest = function (request) {
 /**
  * Creates query for the filter for selected fields
  *
- * @this {YaeRouter}
+ * @this {RouterExpress}
  * @param {object} params Parameters object
  * @param {array} filters Filters array
  * @returns {string} Query string
  *
  * @TODO: Can we do this with underscore?
  */
-YaeRouter.prototype.createUrlSearchQuery = function (params, filters) {
+RouterExpress.prototype.createUrlSearchQuery = function (params, filters) {
 	
 	var resultParams = {};
 
@@ -222,4 +222,4 @@ YaeRouter.prototype.createUrlSearchQuery = function (params, filters) {
 
 
 
-module.exports = YaeRouter;
+module.exports = RouterExpress;
