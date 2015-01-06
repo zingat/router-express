@@ -5,6 +5,8 @@
 [![License][license-image]][license-url]
 [![Downloads][downloads-image]][downloads-url]
 
+[![npm badge][npm-badge-png]][npm-url]
+
 Yet another routing for Express.
 
 ### Features
@@ -66,3 +68,4 @@ router.apply(app);
 [license-url]: LICENSE
 [downloads-image]: http://img.shields.io/npm/dm/router-express.svg
 [downloads-url]: http://npm-stat.com/charts.html?package=router-express
+[npm-badge-png]: https://nodei.co/npm/router-express.png?downloads=true&stars=true
