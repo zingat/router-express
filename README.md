@@ -18,7 +18,7 @@ npm install router-express
 ### Basic usage
 
 ```js
-// Define App
+// Define app
 var express = require('express');
 var app = express();
 
