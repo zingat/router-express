@@ -1,5 +1,10 @@
 # router-express <sup>[![Version Badge][npm-version-svg]][npm-url]</sup>
 
+[![dependency status][deps-svg]][deps-url]
+[![dev dependency status][dev-deps-svg]][dev-deps-url]
+[![License][license-image]][license-url]
+[![Downloads][downloads-image]][downloads-url]
+
 Yet another routing for Express.
 
 ### Features
@@ -53,3 +58,11 @@ router.apply(app);
 
 [npm-version-svg]: http://vb.teelaun.ch/yasinaydin/router-express.svg
 [npm-url]: https://npmjs.org/package/router-express
+[deps-svg]: http://david-dm.org/yasinaydin/router-express/status.svg
+[deps-url]: http://david-dm.org/yasinaydin/router-express
+[dev-deps-svg]: https://david-dm.org/yasinaydin/router-express/dev-status.svg
+[dev-deps-url]: https://david-dm.org/yasinaydin/router-express#info=devDependencies
+[license-image]: http://img.shields.io/npm/l/router-express.svg
+[license-url]: LICENSE
+[downloads-image]: http://img.shields.io/npm/dm/router-express.svg
+[downloads-url]: http://npm-stat.com/charts.html?package=router-express
