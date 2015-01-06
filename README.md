@@ -1,4 +1,4 @@
-# router-express
+# router-express <sup>[![Version Badge][npm-version-svg]][npm-url]</sup>
 
 Yet another routing for Express.
 
@@ -50,3 +50,5 @@ router.apply(app);
 * [Updating URLs](https://github.com/yasinaydin/router-express/wiki/updateurl)
 * [Getting parameters](https://github.com/yasinaydin/router-express/wiki/getparams)
 * [Limiting parameters](https://github.com/yasinaydin/router-express/wiki/limitparams)
+
+[npm-version-svg]: http://vb.teelaun.ch/yasinaydin/router-express.svg
