@@ -27,7 +27,7 @@ function YaeRouter (routes, controller) {
  * @this {YaeRouter}
  * @param {object} expressApp Express application
  */
-YaeRouter.prototype.Apply = function (expressApp) {
+YaeRouter.prototype.apply = function (expressApp) {
 	for (var i=0; i<this.routes.length; i++) {
 		var route = this.routes[i];
 
@@ -53,7 +53,7 @@ YaeRouter.prototype.Apply = function (expressApp) {
  *
  * @TODO: Will use url lib to create urls instead
  */
-YaeRouter.prototype.CreateUrl = function (routeName, params) {
+YaeRouter.prototype.createUrl = function (routeName, params) {
 	// Get url structure from routing file
 	var route = _.findWhere(this.routes, {name: routeName});
 	var url = route.url;
@@ -105,7 +105,7 @@ YaeRouter.prototype.CreateUrl = function (routeName, params) {
  * @param {primitive} value Value of the parameter, empty if to remove parameter
  * @returns {string} New url
  */
-YaeRouter.prototype.UpdateUrlWithParam = function (baseurl, param, value) {
+YaeRouter.prototype.updateUrlWithParam = function (baseurl, param, value) {
 	var parsedUrl = url.parse(baseurl,true);
 	var query = parsedUrl.query;
 	var pathname = parsedUrl.pathname;
@@ -136,7 +136,7 @@ YaeRouter.prototype.UpdateUrlWithParam = function (baseurl, param, value) {
  * @param {object} request Express request object
  * @returns {object} Parameters object
  */
-YaeRouter.prototype.FetchRequestAndDefaultParams = function (request) {
+YaeRouter.prototype.fetchRequestAndDefaultParams = function (request) {
 	var results = {};
 
 	// Get all request query parameters
@@ -186,7 +186,7 @@ YaeRouter.prototype.FetchRequestAndDefaultParams = function (request) {
  * @param {object} request Express request object
  * @returns {object} Parameters object
  */
-YaeRouter.prototype.GetRouteObjectFromRequest = function (request) {
+YaeRouter.prototype.getRouteObjectFromRequest = function (request) {
 	// Get base pathname
 	var pathname = request._parsedUrl.pathname;
 
