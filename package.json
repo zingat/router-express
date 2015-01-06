@@ -1,6 +1,6 @@
 {
   "name": "yet-another-express-router",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Advanced routing for Express",
   "main": "index.js",
   "scripts": {
@@ -26,6 +26,7 @@
   "homepage": "https://github.com/yasinaydin/yet-another-express-router",
   "dependencies": {
     "is-object": "^1.0.1",
+    "qs": "^2.3.3",
     "underscore": "^1.7.0"
   }
 }
