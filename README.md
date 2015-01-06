@@ -52,3 +52,4 @@ router.apply(app);
 * [Limiting parameters](https://github.com/yasinaydin/router-express/wiki/limitparams)
 
 [npm-version-svg]: http://vb.teelaun.ch/yasinaydin/router-express.svg
+[npm-url]: https://npmjs.org/package/router-express
