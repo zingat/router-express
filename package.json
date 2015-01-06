@@ -1,29 +1,28 @@
 {
-  "name": "yet-another-express-router",
-  "version": "1.0.4",
-  "description": "Advanced routing for Express",
+  "name": "router-express",
+  "version": "1.0.5",
+  "description": "Yet another routing for Express",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yasinaydin/yet-another-express-router"
+    "url": "https://github.com/yasinaydin/router-express"
   },
   "keywords": [
     "express",
     "routing",
     "router",
-    "resourceful",
     "reverse",
     "app"
   ],
   "author": "Ozgur Yasin Aydin",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/yasinaydin/yet-another-express-router/issues"
+    "url": "https://github.com/yasinaydin/router-express/issues"
   },
-  "homepage": "https://github.com/yasinaydin/yet-another-express-router",
+  "homepage": "https://github.com/yasinaydin/router-express",
   "dependencies": {
     "is-object": "^1.0.1",
     "qs": "^2.3.3",
