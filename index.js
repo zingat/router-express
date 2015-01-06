@@ -120,7 +120,7 @@ RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value) {
 		}
 	}
 
-	return this.CreateUrl(routename, query);
+	return this.createUrl(routename, query);
 }
 
 
@@ -145,7 +145,7 @@ RouterExpress.prototype.fetchRequestAndDefaultParams = function (request) {
 	}
 
 	// Fetcing route object
-	var routeObject = this.GetRouteObjectFromRequest(request);
+	var routeObject = this.getRouteObjectFromRequest(request);
 
 	// Get default route params
 	var defaultParameters = isObject(routeObject['params'])
