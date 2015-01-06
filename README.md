@@ -27,12 +27,13 @@ var routes = [{
     name: 'homepage',
     url: '/',
     action: 'home',
-}.. ];
+}];
 
 // Define actions
 var actions = {
     home: function (request, response) {
       res.end('Welcome to homepage with router-express');
+    }
 };
 
 // Initialize router
