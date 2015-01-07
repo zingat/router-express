@@ -51,26 +51,35 @@ RouterExpress.prototype.apply = function (expressApp) {
  * @param {object} params Parameters object
  * @returns {string} Created url
  *
+ * @example
+ * route = { name: 'test', url: '/test' }
+ * // returns "/test?param1=foo"
+ * RouterExpress.createUrl('test', {param1: 'foo'})
+ *
  * @TODO: Will use url lib to create urls instead
  */
 RouterExpress.prototype.createUrl = function (routeName, params) {
-	// Get url structure from routing file
-	var route = _.findWhere(this.routes, {name: routeName});
-	var url = route.url;
-	var defaults = route.defaults !== undefined
-		? route.defaults
+	// Get route object for the routeName
+	var routeObject = _.findWhere(this.routes, {name: routeName});
+
+	// Get route url to parse the url
+	var url = routeObject.url;
+
+	// Get route default params
+	var routeDefaultParams = _.has(routeObject, 'params')
+		? routeObject.params
 		: {};
 
 	// To track first extra param with ? and others with &
+	// @TODO: Can we do this with qs/querystring
 	var getParamsUsed = false;
 
 	for (paramName in params) {
 		// Get parameter value
 		var paramValue = params[paramName];
 
-		//if (!paramName in defaults) {
-		if (paramValue !== defaults[paramName]) {
-
+		// @TODO: Router.defaults tan kontrol et, varsa ve aynıysa hiç ekleme
+		//if (paramValue !== defaults[paramName]) {
 			// If parameter exists in the route, put it in the route
 			if (url.search(paramName) != -1) {
 				url = url.replace(':'+paramName+'?', paramValue);
@@ -84,13 +93,25 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
 				url += paramName + '=' + paramValue;
 				getParamsUsed = true;
 			}
-		}
+		//}
 	}
 
 	// Removing all unused url parameters
 	url = url.replace(/\/:[a-zA-Z]*[\?]?/g, '');
 
 	return url;
+}
+
+RouterExpress.prototype.addParamToParams = function (params, name, value) {
+	if ( undefined !== value ) {
+		params[name] = value;
+	}
+	else {
+		if (name in params) {
+			delete params[name];
+		}
+	}
+	return params;
 }
 
 
@@ -108,19 +129,13 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
 RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value) {
 	var parsedUrl = url.parse(baseurl,true);
 	var query = parsedUrl.query;
+
+	var updatedParams = this.addParamToParams (query, param, value);
+
 	var pathname = parsedUrl.pathname;
 	var routename = _.findWhere(this.routes, {url: pathname}).name;
 
-	if ( undefined !== value ) {
-		query[param] = value;
-	}
-	else {
-		if (param in query) {
-			delete query[param];
-		}
-	}
-
-	return this.createUrl(routename, query);
+	return this.createUrl(routename, updatedParams);
 }
 
 
@@ -148,16 +163,20 @@ RouterExpress.prototype.fetchRequestAndDefaultParams = function (request) {
 	var routeObject = this.getRouteObjectFromRequest(request);
 
 	// Get default route params
-	var defaultParameters = isObject(routeObject['params'])
-		? routeObject['params']
-		: {};
+	var defaultParameters = _.has(routeObject, 'params')
+		? isObject(routeObject['params'])
+			? routeObject['params']
+			: {}
+		: {}
+	;
 
 	// For each default param
 	for (paramName in defaultParameters) {
 		var param = defaultParameters[paramName];
 
 		// If this does not exist in request params
-		if ( ! isObject(defaultParameters[paramName]) ) {
+		//if ( ! isObject(defaultParameters[paramName]) ) {
+		if ( ! _.has(request.query, paramName)) {
 			// Add to result params
 			results[paramName] = param.default;
 		}
@@ -211,8 +230,9 @@ RouterExpress.prototype.createUrlSearchQuery = function (params, filters) {
 	var resultParams = {};
 
 	for (paramName in params) {
-		if (_.contains(filters, paramName)) ;
-		resultParams[paramName]  = params[paramName];
+		if (_.contains(filters, paramName)) {
+			resultParams[paramName]  = params[paramName];
+		}
 	}
 	
 	//var result = querystring.stringify(resultParams)
