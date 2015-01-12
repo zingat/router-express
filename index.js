@@ -130,12 +130,21 @@ RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value) {
 	var parsedUrl = url.parse(baseurl,true);
 	var query = parsedUrl.query;
 
+	var pathname = parsedUrl.pathname;
+	var route = _.findWhere(this.routes, {url: pathname});
+
+	// Checking default param value, empty if value is default
+	if (_.has(route, 'params')) {
+		if (_.has(route.params, param)) {
+			if ( value == route.params[param].default ) {
+				value = undefined;
+			}
+		}
+	}
+
 	var updatedParams = this.addParamToParams (query, param, value);
 
-	var pathname = parsedUrl.pathname;
-	var routename = _.findWhere(this.routes, {url: pathname}).name;
-
-	return this.createUrl(routename, updatedParams);
+	return this.createUrl(route.name, updatedParams);
 }
 
 
