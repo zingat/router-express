@@ -1,6 +1,6 @@
 {
   "name": "router-express",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Yet another routing for Express",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/yasinaydin/router-express",
   "dependencies": {
-    "qs": "^2.3.3",
-    "lodash": "^1.7.0"
+    "qs": "latest",
+    "lodash": "latest"
   }
 }
