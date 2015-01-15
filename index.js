@@ -1,6 +1,5 @@
 // Loading required libs
-var _        = require('underscore');
-var isObject = require('is-object');
+var _        = require('lodash');
 var qs       = require('qs');
 var url      = require('url');
 
@@ -22,24 +21,62 @@ function RouterExpress (routes, controller) {
 
 
 /**
- * Applies routing table to Express App
+ * Binds routes to actions
  *
  * @this {RouterExpress}
- * @param {object} expressApp Express application
+ * @param {object} app - Express app
  */
-RouterExpress.prototype.apply = function (expressApp) {
-	for (var i=0; i<this.routes.length; i++) {
-		var route = this.routes[i];
+RouterExpress.prototype.bind = function (app) {
+	controller = this.controller;
 
-		var url = route.url;
-		var method = 'method' in route
-			? route.method.toLowerCase()
-			: 'get';
-		var controller = this.controller[route.action];
+	_.forEach(this.routes, function (route) {
+		var method = route.method || 'get';
 
-		expressApp[method](url, controller);
-	}
+		app[method](route.url, function (req, res) {
+			res.params = Router.fetchParams(req, route);
+			controller[route.action](req,res);
+		});
+	});
 }
+
+
+
+/**
+ * Gets default params, overrides with route params
+ *
+ * @this {RouterExpress}
+ * @param {object} request - Express request
+ * @param {object} route - Route object
+ * @returns {object} Parameters object
+ */
+RouterExpress.prototype.fetchParams = function (request, route) {
+	var routeParams = route.params || {};
+	var defaultParams = _.mapValues(routeParams, 'default');
+
+	return _.merge(defaultParams, request.query, request.params, {route:route});
+}
+
+
+
+/**
+ * Creates query for the filter for selected fields
+ *
+ * @this {RouterExpress}
+ * @param {object} params Parameters object
+ * @param {array} filters Filters array
+ * @returns {string} Query string
+ */
+RouterExpress.prototype.createUrlQuery = function (params, filters) {
+	var resultParams = _.pick(params, filters);
+
+	return qs.stringify(resultParams);
+}
+
+
+
+
+
+
 
 
 
@@ -48,7 +85,7 @@ RouterExpress.prototype.apply = function (expressApp) {
  *
  * @this {RouterExpress}
  * @param {string} routeName Name of the route
- * @param {object} params Parameters object
+ * @param {object=} params Parameters object
  * @returns {string} Created url
  *
  * @example
@@ -145,108 +182,6 @@ RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value) {
 	var updatedParams = this.addParamToParams (query, param, value);
 
 	return this.createUrl(route.name, updatedParams);
-}
-
-
-
-/**
- * Fetches and merges all params from request and defaults
- * Default is fetched from route object
- * Request param is overriden if exists
- * If values exist in route object, compares request param
- *   and if not valid, overrides with default value
- *
- * @this {RouterExpress}
- * @param {object} request Express request object
- * @returns {object} Parameters object
- */
-RouterExpress.prototype.fetchRequestAndDefaultParams = function (request) {
-	var results = {};
-
-	// Get all request query parameters
-	for (queryParamName in request.query) {
-		results[queryParamName] = request.query[queryParamName];
-	}
-
-	// Fetcing route object
-	var routeObject = this.getRouteObjectFromRequest(request);
-
-	// Get default route params
-	var defaultParameters = _.has(routeObject, 'params')
-		? isObject(routeObject['params'])
-			? routeObject['params']
-			: {}
-		: {}
-	;
-
-	// For each default param
-	for (paramName in defaultParameters) {
-		var param = defaultParameters[paramName];
-
-		// If this does not exist in request params
-		//if ( ! isObject(defaultParameters[paramName]) ) {
-		if ( ! _.has(request.query, paramName)) {
-			// Add to result params
-			results[paramName] = param.default;
-		}
-
-		// If exists in the request params
-		else {
-			// If there are standard values
-			if ( undefined !== param['values'] ) {
-				// If request value does not exist in available values
-				if ( ! _.contains(param['values'], results[paramName])) {
-					// Change parameter value to route default
-					results[paramName] = defaultParameters[paramName]['default'];
-				}
-			}
-		}
-	}
-	return results;
-}
-
-
-
-/**
- * Finds a route from routes object
- *
- * @this {RouterExpress}
- * @param {object} request Express request object
- * @returns {object} Parameters object
- */
-RouterExpress.prototype.getRouteObjectFromRequest = function (request) {
-	// Get base pathname
-	var pathname = request._parsedUrl.pathname;
-
-	// Finds and returns route object
-	return _.findWhere(this.routes, {url: pathname});
-}
-
-
-
-/**
- * Creates query for the filter for selected fields
- *
- * @this {RouterExpress}
- * @param {object} params Parameters object
- * @param {array} filters Filters array
- * @returns {string} Query string
- *
- * @TODO: Can we do this with underscore?
- */
-RouterExpress.prototype.createUrlSearchQuery = function (params, filters) {
-	
-	var resultParams = {};
-
-	for (paramName in params) {
-		if (_.contains(filters, paramName)) {
-			resultParams[paramName]  = params[paramName];
-		}
-	}
-	
-	//var result = querystring.stringify(resultParams)
-	var result = qs.stringify(resultParams);
-	return result;
 }
 
 
