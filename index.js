@@ -69,7 +69,13 @@ RouterExpress.prototype.fetchParams = function (request, route) {
 RouterExpress.prototype.createUrlQuery = function (params, filters) {
 	var resultParams = _.pick(params, filters);
 
-	return qs.stringify(resultParams);
+	// Removing empty elements
+	var filteredResultParams = _.reduce(resultParams, function (result, num, key) {
+		if (num) result[key] = num;
+		return result;
+	}, {});
+
+	return qs.stringify(filteredResultParams);
 }
 
 
