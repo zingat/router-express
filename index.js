@@ -71,7 +71,13 @@ RouterExpress.prototype.createUrlQuery = function (params, filters) {
 
 	// Removing empty elements
 	var filteredResultParams = _.reduce(resultParams, function (result, num, key) {
-		if (num) result[key] = num;
+
+		if (
+			( _.isArray(num) && ! _.isEmpty(_.compact(num)) ) ||
+			( ! _.isArray(num) && num )
+		)
+			result[key] = num;
+
 		return result;
 	}, {});
 
