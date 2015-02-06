@@ -26,19 +26,35 @@ function RouterExpress (routes, controller) {
  * @this {RouterExpress}
  * @param {object} app - Express app
  */
-RouterExpress.prototype.bind = function (app) {
-	controller = this.controller;
+RouterExpress.prototype.bind = function (app, middleware) {
+	var controller = this.controller;
+	var injectMw = this.injectMw;
+	var middleware = middleware || false;
 
 	_.forEach(this.routes, function (route) {
 		var method = route.method || 'get';
 
 		app[method](route.url, function (req, res) {
 			res.params = Router.fetchParams(req, route);
-			controller[route.action](req,res);
+
+			injectMw(req, res, middleware, function (req, res) {
+				controller[route.action](req,res);
+			});
 		});
 	});
 }
 
+
+RouterExpress.prototype.injectMw = function (req, res, middleware, callback) {
+	if ( middleware) {
+		middleware(req,res,function () {
+			callback(req, res)
+		})
+	}
+	else {
+		callback(req, res);
+	}
+}
 
 
 /**
