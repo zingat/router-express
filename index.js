@@ -32,13 +32,20 @@ RouterExpress.prototype.bind = function (app, middleware) {
 	var middleware = middleware || false;
 
 	_.forEach(this.routes, function (route) {
+		if (!(_.has(route, 'action'))) throw new Error ('Route does not have an action: ' + route.name);
+
 		var method = route.method || 'get';
 
 		app[method](route.url, function (req, res) {
 			res.params = Router.fetchParams(req, route);
 
 			injectMw(req, res, middleware, function (req, res) {
-				controller[route.action](req,res);
+				if (!(_.has(controller, route.action))) {
+					throw new Error('Controller not found: ' + route.action);
+				}
+				else {
+					controller[route.action](req,res);
+				}
 			});
 		});
 	});
