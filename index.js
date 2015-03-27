@@ -1,224 +1,213 @@
-// Loading required libs
+/*jslint nomen: true, todo: true */
+/*global require, Router, console, module */
+// @TODO Update JSDOC
+
+/**
+* Dependencies
+*/
+
 var _        = require('lodash');
+var access   = require('safe-access');
 var qs       = require('qs');
 var url      = require('url');
 
-
-
 /**
- * Initializes router
- *
- * @constructor
- * @this {RouterExpress}
- * @param {object} routes Route object
- * @param {object} controller Controller object
- */
-function RouterExpress (routes, controller) {
-	this.controller = controller;
-	this.routes = routes;
+* Initializes router
+*
+* @constructor
+* @this {RouterExpress}
+* @param {object} routes Route object
+* @param {object} controller Controller object
+*/
+function RouterExpress(routes, controller) {
+  "use strict";
+
+  this.controller = controller;
+  this.routes = routes;
 }
 
-
-
 /**
- * Binds routes to actions
- *
- * @this {RouterExpress}
- * @param {object} app - Express app
- */
+* Binds routes to actions
+*
+* @this {RouterExpress}
+* @param {object} app - Express app
+*/
+
 RouterExpress.prototype.bind = function (app, middleware) {
-	var controller = this.controller;
-	var injectMw = this.injectMw;
-	var middleware = middleware || false;
+  "use strict";
 
-	_.forEach(this.routes, function (route) {
-		if (!(_.has(route, 'action'))) throw new Error ('Route does not have an action: ' + route.name);
+  var controller = this.controller,
+  injectMw = this.injectMw;
 
-		var method = route.method || 'get';
+  if (middleware === undefined) {
+    middleware = false;
+  }
 
-		app[method](route.url, function (req, res) {
-			res.params = Router.fetchParams(req, route);
+  _.forEach(this.routes, function (route) {
+    if (!(_.has(route, 'action'))) {
+      throw new Error('Route does not have an action: ' + route.name);
+    }
 
-			injectMw(req, res, middleware, function (req, res) {
-				if (!(_.has(controller, route.action))) {
-					throw new Error('Controller not found: ' + route.action);
-				}
-				else {
-					controller[route.action](req,res);
-				}
-			});
-		});
-	});
-}
+    var method = route.method || 'get';
 
+    app[method](route.url, function (req, res) {
+      res.params = Router.fetchParams(req, route);
+
+      injectMw(req, res, middleware, function (req, res) {
+        if (!(_.has(controller, route.action))) {
+          throw new Error('Controller not found: ' + route.action);
+        }
+
+        controller[route.action](req, res);
+      });
+    });
+  });
+};
+
+/**
+* Injects middleware
+*/
 
 RouterExpress.prototype.injectMw = function (req, res, middleware, callback) {
-	if ( middleware) {
-		middleware(req,res,function () {
-			callback(req, res)
-		})
-	}
-	else {
-		callback(req, res);
-	}
-}
+  "use strict";
 
+  if (middleware) {
+    middleware(req, res, function () {
+      callback(req, res);
+    });
+  } else {
+    callback(req, res);
+  }
+};
 
 /**
- * Gets default params, overrides with route params
- *
- * @this {RouterExpress}
- * @param {object} request - Express request
- * @param {object} route - Route object
- * @returns {object} Parameters object
- */
+* Gets default params, overrides with route params
+*
+* @this {RouterExpress}
+* @param {object} request - Express request
+* @param {object} route - Route object
+* @returns {object} Parameters object
+*/
+
 RouterExpress.prototype.fetchParams = function (request, route) {
-	var routeParams = route.params || {};
-	var defaultParams = _.mapValues(routeParams, 'default');
+  "use strict";
 
-	return _.merge(defaultParams, request.query, request.params, {route:route});
-}
+  var routeParams = route.params || {},
+  defaultParams = _.mapValues(routeParams, 'default');
 
-
+  return _.merge(defaultParams, request.query, request.params, {route: route});
+};
 
 /**
- * Creates query for the filter for selected fields
- *
- * @this {RouterExpress}
- * @param {object} params Parameters object
- * @param {array} filters Filters array
- * @returns {string} Query string
- */
+* Creates query for the filter for selected fields
+*
+* @this {RouterExpress}
+* @param {object} params Parameters object
+* @param {array} filters Filters array
+* @returns {string} Query string
+*/
+
 RouterExpress.prototype.createUrlQuery = function (params, filters) {
-	var resultParams = _.pick(params, filters);
+  "use strict";
 
-	// Removing empty elements
-	var filteredResultParams = _.reduce(resultParams, function (result, num, key) {
+  var resultParams = _.pick(params, filters),
+  filteredResultParams;
 
-		if (
-			( _.isArray(num) && ! _.isEmpty(_.compact(num)) ) ||
-			( ! _.isArray(num) && num )
-		)
-			result[key] = num;
+  // Removing empty elements
+  filteredResultParams = _.reduce(resultParams, function (result, num, key) {
 
-		return result;
-	}, {});
+    if (_.isArray(num)) {
+      num = _.compact(num);
+    }
 
-	return qs.stringify(filteredResultParams);
-}
+    if ((_.isArray(num) && !(_.isEmpty(num))) || (!(_.isArray(num)) && num)) {
+      result[key] = num;
+    }
 
+    return result;
+  }, {});
 
-
-
-
-
-
-
+  return qs.stringify(filteredResultParams);
+};
 
 /**
- * Creates a URL based on route name and parameters
- *
- * @this {RouterExpress}
- * @param {string} routeName Name of the route
- * @param {object=} params Parameters object
- * @returns {string} Created url
- *
- * @example
- * route = { name: 'test', url: '/test' }
- * // returns "/test?param1=foo"
- * RouterExpress.createUrl('test', {param1: 'foo'})
- *
- * @TODO: Will use url lib to create urls instead
- */
+* Creates a URL based on route name and parameters
+*
+* @this {RouterExpress}
+* @param {string} routeName - Name of the route
+* @param {object=} params   - Parameters object
+* @returns {string}         - Created url
+*
+* @example
+* route = { name: 'someRoute', url: '/someUrl' };
+* // returns "/someUrl?param1=foo"
+* RouterExpress.createUrl('someRoute', {param1: 'foo'})
+*/
+
 RouterExpress.prototype.createUrl = function (routeName, params) {
-	// Get route object for the routeName
-	var routeObject = _.findWhere(this.routes, {name: routeName});
+  "use strict";
 
-	// Get route url to parse the url
-	var url = routeObject.url;
+  var routeObject = _.findWhere(this.routes, {name: routeName}),
+  routeParams = access(routeObject, 'params'),
+  routeParamsDefaultValues = _.mapValues(routeParams, 'default'),
+  filteredParams = _.omit(params, function (v, k) {
+    return routeParamsDefaultValues[k] === v;
+  }),
+  urlSuffix = qs.stringify(filteredParams),
+  urlSeperator = urlSuffix ? '?' : '';
 
-	// Get route default params
-	var routeDefaultParams = _.has(routeObject, 'params')
-		? routeObject.params
-		: {};
+  return routeObject.url + urlSeperator + urlSuffix;
+};
 
-	// To track first extra param with ? and others with &
-	// @TODO: Can we do this with qs/querystring
-	var getParamsUsed = false;
-
-	for (paramName in params) {
-		// Get parameter value
-		var paramValue = params[paramName];
-
-		// @TODO: Router.defaults tan kontrol et, varsa ve aynıysa hiç ekleme
-		//if (paramValue !== defaults[paramName]) {
-			// If parameter exists in the route, put it in the route
-			if (url.search(paramName) != -1) {
-				url = url.replace(':'+paramName+'?', paramValue);
-				url = url.replace(':'+paramName, paramValue);
-			}
-			// If not, add it to the end
-			else {
-				url += getParamsUsed
-					? '&'
-					: '?';
-				url += paramName + '=' + paramValue;
-				getParamsUsed = true;
-			}
-		//}
-	}
-
-	// Removing all unused url parameters
-	url = url.replace(/\/:[a-zA-Z]*[\?]?/g, '');
-
-	return url;
-}
+/**
+* Adds param?
+*/
 
 RouterExpress.prototype.addParamToParams = function (params, name, value) {
-	if ( undefined !== value ) {
-		params[name] = value;
-	}
-	else {
-		if (name in params) {
-			delete params[name];
-		}
-	}
-	return params;
-}
+  "use strict";
 
-
+  if (undefined !== value) {
+    params[name] = value;
+  } else {
+    if (params.hasOwnProperty(name)) {
+      delete params[name];
+    }
+  }
+  return params;
+};
 
 /**
- * Updates a url based on a parameter and its value
- * If no value specified, the parameter is removed from url
- *
- * @this {RouterExpress}
- * @param {string} baseurl The url to update
- * @param {string} param Name of the parameter to update
- * @param {primitive} value Value of the parameter, empty if to remove parameter
- * @returns {string} New url
- */
+* Updates a url based on a parameter and its value
+* If no value specified, the parameter is removed from url
+*
+* @this {RouterExpress}
+* @param {string} baseurl The url to update
+* @param {string} param Name of the parameter to update
+* @param {primitive} value Value of the parameter, empty if to remove parameter
+* @returns {string} New url
+*/
+
 RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value) {
-	var parsedUrl = url.parse(baseurl,true);
-	var query = parsedUrl.query;
+  "use strict";
 
-	var pathname = parsedUrl.pathname;
-	var route = _.findWhere(this.routes, {url: pathname});
+  var parsedUrl = url.parse(baseurl, true),
+  query = parsedUrl.query,
+  pathname = parsedUrl.pathname,
+  route = _.findWhere(this.routes, {url: pathname}),
+  updatedParams;
 
-	// Checking default param value, empty if value is default
-	if (_.has(route, 'params')) {
-		if (_.has(route.params, param)) {
-			if ( value == route.params[param].default ) {
-				value = undefined;
-			}
-		}
-	}
+  // Checking default param value, empty if value is default
+  if (_.has(route, 'params')) {
+    if (_.has(route.params, param)) {
+      if (value === route.params[param].default) {
+        value = undefined;
+      }
+    }
+  }
 
-	var updatedParams = this.addParamToParams (query, param, value);
+  updatedParams = this.addParamToParams(query, param, value);
 
-	return this.createUrl(route.name, updatedParams);
-}
-
-
+  return this.createUrl(route.name, updatedParams);
+};
 
 module.exports = RouterExpress;
