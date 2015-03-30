@@ -1,4 +1,4 @@
-/*jslint nomen: true, todo: true */
+/*jslint nomen: true, todo: true, indent: 2 */
 /*global require, Router, console, module */
 // @TODO Update JSDOC
 
@@ -19,6 +19,7 @@ var url      = require('url');
 * @param {object} routes Route object
 * @param {object} controller Controller object
 */
+
 function RouterExpress(routes, controller) {
   "use strict";
 
@@ -147,16 +148,41 @@ RouterExpress.prototype.createUrlQuery = function (params, filters) {
 RouterExpress.prototype.createUrl = function (routeName, params) {
   "use strict";
 
-  var routeObject = _.findWhere(this.routes, {name: routeName}),
-  routeParams = access(routeObject, 'params'),
-  routeParamsDefaultValues = _.mapValues(routeParams, 'default'),
-  filteredParams = _.omit(params, function (v, k) {
+  var routeObject               = _.findWhere(this.routes, {name: routeName}),
+  url                       = routeObject.url,
+  routeParams               = access(routeObject, 'params'),
+  routeParamsDefaultValues  = _.mapValues(routeParams, 'default'),
+  filteredParams            = _.omit(params, function (v, k) {
     return routeParamsDefaultValues[k] === v;
   }),
-  urlSuffix = qs.stringify(filteredParams),
+  extraParams               = {},
+  urlSuffix,
+  urlSeperator,
+  finalUrl
+  ;
+
+  _.forEach(filteredParams, function (paramValue, paramName) {
+    // If url regex has param as :param, replace it
+    if (url.search(paramName) != -1) {
+      url = url.replace(':'+paramName+'?', paramValue);
+      url = url.replace(':'+paramName, paramValue);
+    }
+    // If not, add it to the end
+    else {
+      extraParams[paramName] = paramValue;
+    }
+  });
+
+  // Removing all unused url parameters
+  url = url.replace(/\/:[a-zA-Z]*[\?]?/g, '');
+
+  // Adding query params to the end
+  urlSuffix = qs.stringify(extraParams),
   urlSeperator = urlSuffix ? '?' : '';
 
-  return routeObject.url + urlSeperator + urlSuffix;
+  // Finalizing
+  finalUrl = url + urlSeperator + urlSuffix;
+  return finalUrl;
 };
 
 /**
