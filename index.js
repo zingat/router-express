@@ -1,4 +1,4 @@
-/*jslint nomen: true, todo: true, indent: 2 */
+/*jslint nomen: true, todo: true, indent: 2, regexp: true */
 /*global require, Router, console, module */
 // @TODO Update JSDOC
 
@@ -8,6 +8,7 @@
 
 var _        = require('lodash');
 var access   = require('safe-access');
+var async    = require('async');
 var qs       = require('qs');
 var url      = require('url');
 
@@ -28,6 +29,32 @@ function RouterExpress(routes, controller) {
 }
 
 /**
+ * Groups routes by order type
+ * @param {Array} routes
+ * @param {Function} callback
+ */
+
+RouterExpress.prototype.parseOrders = function (routes, callback) {
+  "use strict";
+
+  var noOrderRoutes = _.filter(routes, function (route) {
+    return !(_.has(route, 'order')) && !(_.has(route, 'lastOrder'));
+  }),
+    orderRoutes = _.groupBy(_.filter(routes, function (route) {
+      return _.has(route, 'order');
+    }), function (route) {
+      return route.order;
+    }),
+    lastOrderRoutes = _.groupBy(_.filter(routes, function (route) {
+      return _.has(route, 'lastOrder');
+    }), function (route) {
+      return route.lastOrder;
+    });
+
+  callback(noOrderRoutes, orderRoutes, lastOrderRoutes);
+};
+
+/**
 * Binds routes to actions
 *
 * @this {RouterExpress}
@@ -37,36 +64,93 @@ function RouterExpress(routes, controller) {
 RouterExpress.prototype.bind = function (app, middleware) {
   "use strict";
 
-  var controller = this.controller,
-  injectMw = this.injectMw;
+  if (middleware === undefined) { middleware = false; }
+  this.middleware = middleware;
 
-  if (middleware === undefined) {
-    middleware = false;
-  }
+  var that = this;
 
-  _.forEach(this.routes, function (route) {
-    if (!(_.has(route, 'action'))) {
-      throw new Error('Route does not have an action: ' + route.name);
-    }
+  this.parseOrders(this.routes, function (noOrderRoutes, orderRoutes, lastOrderRoutes) {
+    that.parseOrderedRoutes(app, orderRoutes, that, function () {
+      async.forEach(noOrderRoutes, function (route, midCallback) {
+        that.injectRoute(app, route, that);
 
-    var method = route.method || 'get';
+        midCallback();
+      }, function (err) {
+        if (err) { throw new Error('Error on iteration!'); }
 
-    app[method](route.url, function (req, res) {
-      res.params = Router.fetchParams(req, route);
-
-      injectMw(req, res, middleware, function (req, res) {
-        if (!(_.has(controller, route.action))) {
-          throw new Error('Controller not found: ' + route.action);
-        }
-
-        controller[route.action](req, res);
+        that.parseOrderedRoutes(app, lastOrderRoutes, that, function () {
+          console.log('Routes added');
+        });
       });
     });
   });
 };
 
 /**
-* Injects middleware
+ * Binds ordered routes to app
+ *
+ * @param {Object} app
+ * @param {Array} orderedRoutes
+ * @param {Object} that - RouterExpress object
+ * @param {Function} callback
+ */
+
+RouterExpress.prototype.parseOrderedRoutes = function (app, orderedRoutes, that, callback) {
+  "use strict";
+
+  async.forEach(Object.keys(orderedRoutes), function (order, midCallback) {
+    var routes = access(orderedRoutes, order);
+
+    _.forEach(routes, function (route) {
+      that.injectRoute(app, route, that);
+    });
+
+    midCallback();
+
+  }, function (err) {
+    if (err) { throw new Error('Error on iteration!'); }
+
+    callback();
+  });
+};
+
+/**
+ * Injects a route to app
+ *
+ * @param {Object} app
+ * @param {Object} route
+ * @param {Object} that - RouterExpress Object
+ */
+
+RouterExpress.prototype.injectRoute = function (app, route, that) {
+  "use strict";
+
+  if (!(_.has(route, 'action'))) {
+    throw new Error('Route does not have an action: ' + route.name);
+  }
+
+  var method = route.method || 'get';
+
+  app[method](route.url, function (req, res) {
+    res.params = that.fetchParams(req, route);
+
+    that.injectMw(req, res, that.middleware, function (req, res) {
+      if (!(_.has(that.controller, route.action))) {
+        throw new Error('Controller not found: ' + route.action);
+      }
+
+      that.controller[route.action](req, res);
+    });
+  });
+};
+
+/**
+ * Injects middleware
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} middleware
+ * @param {Function} callback
 */
 
 RouterExpress.prototype.injectMw = function (req, res, middleware, callback) {
@@ -94,7 +178,7 @@ RouterExpress.prototype.fetchParams = function (request, route) {
   "use strict";
 
   var routeParams = route.params || {},
-  defaultParams = _.mapValues(routeParams, 'default');
+    defaultParams = _.mapValues(routeParams, 'default');
 
   return _.merge(defaultParams, request.query, request.params, {route: route});
 };
@@ -112,7 +196,7 @@ RouterExpress.prototype.createUrlQuery = function (params, filters) {
   "use strict";
 
   var resultParams = _.pick(params, filters),
-  filteredResultParams;
+    filteredResultParams;
 
   // Removing empty elements
   filteredResultParams = _.reduce(resultParams, function (result, num, key) {
@@ -149,35 +233,42 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
   "use strict";
 
   var routeObject               = _.findWhere(this.routes, {name: routeName}),
-  url                       = routeObject.url,
-  routeParams               = access(routeObject, 'params'),
-  routeParamsDefaultValues  = _.mapValues(routeParams, 'default'),
-  filteredParams            = _.omit(params, function (v, k) {
-    return routeParamsDefaultValues[k] === v;
-  }),
-  extraParams               = {},
-  urlSuffix,
-  urlSeperator,
-  finalUrl
-  ;
+    url                       = routeObject.url,
+    routeParams               = access(routeObject, 'params'),
+    routeParamsDefaultValues  = _.mapValues(routeParams, 'default'),
+    filteredParams            = _.omit(params, function (v, k) {
+      return routeParamsDefaultValues[k] === v;
+    }),
+    extraParams               = {},
+    urlSuffix,
+    urlSeperator,
+    finalUrl;
 
   _.forEach(filteredParams, function (paramValue, paramName) {
     // If url regex has param as :param, replace it
-    if (url.search(paramName) != -1) {
-      url = url.replace(':'+paramName+'?', paramValue);
-      url = url.replace(':'+paramName, paramValue);
-    }
-    // If not, add it to the end
-    else {
+    if (url.search(paramName) !== -1) {
+      url = url
+        .replace(':' + paramName + '?/?', paramValue + '/')
+        .replace(':' + paramName + '?-?', paramValue + '-')
+        .replace('-?:' + paramName + '?', '-' + paramValue)
+        .replace(':' + paramName + '?', paramValue)
+        .replace(':' + paramName, paramValue);
+
+    } else {
+      // If not, add it to the end
       extraParams[paramName] = paramValue;
     }
   });
 
   // Removing all unused url parameters
-  url = url.replace(/\/:[a-zA-Z]*[\?]?/g, '');
+  url = url
+    .replace(/-\?/g, '')
+    .replace(/\/\?/g, '')
+    //.replace(/\/:[a-zA-Z]*[\?]?/g, '')
+    .replace(/:([^}?]*)\?/g, '');
 
   // Adding query params to the end
-  urlSuffix = qs.stringify(extraParams),
+  urlSuffix = qs.stringify(extraParams);
   urlSeperator = urlSuffix ? '?' : '';
 
   // Finalizing
@@ -217,10 +308,10 @@ RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value) {
   "use strict";
 
   var parsedUrl = url.parse(baseurl, true),
-  query = parsedUrl.query,
-  pathname = parsedUrl.pathname,
-  route = _.findWhere(this.routes, {url: pathname}),
-  updatedParams;
+    query = parsedUrl.query,
+    pathname = parsedUrl.pathname,
+    route = _.findWhere(this.routes, {url: pathname}),
+    updatedParams;
 
   // Checking default param value, empty if value is default
   if (_.has(route, 'params')) {
