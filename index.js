@@ -1,3 +1,4 @@
+    } else {
 /*jslint nomen: true, todo: true, indent: 2, regexp: true */
 /*global require, Router, console, module */
 // @TODO Update JSDOC
@@ -131,7 +132,9 @@ RouterExpress.prototype.injectRoute = function (app, route, that) {
 
   var method = route.method || 'get';
 
-  app[method](route.url, function (req, res) {
+  var url = route.regexUrl || route.url;
+
+  app[method](url, function (req, res) {
     res.params = that.fetchParams(req, route);
 
     that.injectMw(req, res, that.middleware, function (req, res) {
@@ -166,6 +169,36 @@ RouterExpress.prototype.injectMw = function (req, res, middleware, callback) {
 };
 
 /**
+ * Get params from url by regex
+ *
+ * @param {String} path  - url to parse
+ * @param {Object} route - RouterExpress object
+ * @returns {Object}     - Params container
+ */
+
+function getRegexParams (path, route) {
+  var regexUrl = access(route, 'regexUrl');
+  var regexParams = access(route, 'regexParams');
+
+  if (!regexUrl || !regexParams) { return {}; }
+
+  var routeRegex = new RegExp(route.regexUrl);
+  var matches = routeRegex.exec(path);
+  var params = {};
+
+  _.each(regexParams, function (param, i) {
+    var matchName = matches[i+1];
+    if (matchName[matchName.length-1] == '-') {
+      matchName = matchName.slice(0, -1);
+    }
+
+    params[param] = matchName;
+  });
+
+  return params;
+}
+
+/**
 * Gets default params, overrides with route params
 *
 * @this {RouterExpress}
@@ -177,10 +210,11 @@ RouterExpress.prototype.injectMw = function (req, res, middleware, callback) {
 RouterExpress.prototype.fetchParams = function (request, route) {
   "use strict";
 
+  var regexParams = getRegexParams(request.path, route);
   var routeParams = route.params || {},
     defaultParams = _.mapValues(routeParams, 'default');
 
-  return _.merge(defaultParams, request.query, request.params, {route: route});
+  return _.merge(defaultParams, request.query, request.params, regexParams, {route: route});
 };
 
 /**
@@ -262,10 +296,14 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
 
   // Removing all unused url parameters
   url = url
-    .replace(/-\?/g, '')
-    .replace(/\/\?/g, '')
+    .replace(/(-:.*)(?=\?)/g, '') // /satilik-:var? > /satilik
+    .replace(/\/:.*\?-/g, '') // /:var?-satilik > /satilik
+    .replace(/\?+/g, '') // /satilik?? > /satilik?
+    //.replace(/-\?/g, '') // /...:?... > /..... , may not be needed anymore
+    //.replace(/\/\?/g, '') // /.../?...  >/...., dunno where it is used
     //.replace(/\/:[a-zA-Z]*[\?]?/g, '')
-    .replace(/:([^}?]*)\?/g, '');
+    //.replace(/:([^}?]*)\?/g, '')
+  ;
 
   // Adding query params to the end
   urlSuffix = qs.stringify(extraParams);
@@ -304,14 +342,22 @@ RouterExpress.prototype.addParamToParams = function (params, name, value) {
 * @returns {string} New url
 */
 
-RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value) {
+RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value, route) {
   "use strict";
+
 
   var parsedUrl = url.parse(baseurl, true),
     query = parsedUrl.query,
     pathname = parsedUrl.pathname,
-    route = _.findWhere(this.routes, {url: pathname}),
     updatedParams;
+
+  if (route === undefined) {
+    route = _.findWhere(this.routes, {url: pathname});
+  }
+
+  if (!route) {
+    throw new Error ('ROUTE NOT FOUND: url=' + baseurl + ' param=' + param);
+  }
 
   // Checking default param value, empty if value is default
   if (_.has(route, 'params')) {
