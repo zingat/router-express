@@ -1,4 +1,3 @@
-    } else {
 /*jslint nomen: true, todo: true, indent: 2, regexp: true */
 /*global require, Router, console, module */
 // @TODO Update JSDOC
@@ -179,6 +178,7 @@ RouterExpress.prototype.injectMw = function (req, res, middleware, callback) {
 function getRegexParams (path, route) {
   var regexUrl = access(route, 'regexUrl');
   var regexParams = access(route, 'regexParams');
+  path = path.split('?').shift();
 
   if (!regexUrl || !regexParams) { return {}; }
 
@@ -211,6 +211,7 @@ RouterExpress.prototype.fetchParams = function (request, route) {
   "use strict";
 
   var regexParams = getRegexParams(request.path, route);
+
   var routeParams = route.params || {},
     defaultParams = _.mapValues(routeParams, 'default');
 
@@ -287,7 +288,6 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
         .replace('-?:' + paramName + '?', '-' + paramValue)
         .replace(':' + paramName + '?', paramValue)
         .replace(':' + paramName, paramValue);
-
     } else {
       // If not, add it to the end
       extraParams[paramName] = paramValue;
@@ -296,9 +296,13 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
 
   // Removing all unused url parameters
   url = url
+    .replace(/\/-(.*)/g, '/$1') // /-.... > /
     .replace(/(-:.*)(?=\?)/g, '') // /satilik-:var? > /satilik
     .replace(/\/:.*\?-/g, '') // /:var?-satilik > /satilik
     .replace(/\?+/g, '') // /satilik?? > /satilik?
+    .replace(/\/(.*)-$/g, '/$1') // /izmir-satilik- > /izmir-satilik
+    .replace(/\/.*(-)\?.*$/g, '') // /izmir-satilik-?listType=table > /izmir-satilik?listType=table
+
     //.replace(/-\?/g, '') // /...:?... > /..... , may not be needed anymore
     //.replace(/\/\?/g, '') // /.../?...  >/...., dunno where it is used
     //.replace(/\/:[a-zA-Z]*[\?]?/g, '')
@@ -345,9 +349,9 @@ RouterExpress.prototype.addParamToParams = function (params, name, value) {
 RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value, route) {
   "use strict";
 
-
   var parsedUrl = url.parse(baseurl, true),
-    query = parsedUrl.query,
+    regexParams = getRegexParams(baseurl, route),
+    query = _.merge(parsedUrl.query, regexParams),
     pathname = parsedUrl.pathname,
     updatedParams;
 
