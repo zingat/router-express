@@ -11,6 +11,7 @@ var access   = require('safe-access');
 var async    = require('async');
 var qs       = require('qs');
 var url      = require('url');
+var utils    = require('./utils');
 
 /**
 * Initializes router
@@ -295,19 +296,7 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
   });
 
   // Removing all unused url parameters
-  url = url
-    .replace(/\/-(.*)/g, '/$1') // /-.... > /
-    .replace(/(-:.*)(?=\?)/g, '') // /satilik-:var? > /satilik
-    .replace(/\/:.*\?-/g, '') // /:var?-satilik > /satilik
-    .replace(/\?+/g, '') // /satilik?? > /satilik?
-    .replace(/\/(.*)-$/g, '/$1') // /izmir-satilik- > /izmir-satilik
-    .replace(/\/.*(-)\?.*$/g, '') // /izmir-satilik-?listType=table > /izmir-satilik?listType=table
-
-    //.replace(/-\?/g, '') // /...:?... > /..... , may not be needed anymore
-    //.replace(/\/\?/g, '') // /.../?...  >/...., dunno where it is used
-    //.replace(/\/:[a-zA-Z]*[\?]?/g, '')
-    //.replace(/:([^}?]*)\?/g, '')
-  ;
+  url = utils.cleanUrl(url);
 
   // Adding query params to the end
   urlSuffix = qs.stringify(extraParams);
