@@ -268,8 +268,13 @@ RouterExpress.prototype.createUrlQuery = function (params, filters) {
 RouterExpress.prototype.createUrl = function (routeName, params) {
   "use strict";
 
-  var routeObject               = _.findWhere(this.routes, {name: routeName}),
-    url                       = routeObject.url,
+  var routeObject               = _.findWhere(this.routes, {name: routeName});
+
+  if (!routeObject) {
+    throw new Error('createUrl failed. routeName=' + routeName + ' params=' + params);
+  }
+
+  var url                     = routeObject.url,
     routeParams               = access(routeObject, 'params'),
     routeParamsDefaultValues  = _.mapValues(routeParams, 'default'),
     filteredParams            = _.omit(params, function (v, k) {
