@@ -45,7 +45,7 @@ utils.addParamToParams = function (params, name, value) {
  */
 
 utils.checkAndAddParam = function (route, allParams, param, value) {
-  var defaultParamValue = access(route, 'params.' + paramName + '.default');
+  var defaultParamValue = access(route, 'params.' + param + '.default');
 
   if (defaultParamValue === value) { value = undefined; }
 
