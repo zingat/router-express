@@ -6,12 +6,13 @@
 * Dependencies
 */
 
-var _        = require('lodash');
-var access   = require('safe-access');
-var async    = require('async');
-var qs       = require('qs');
-var url      = require('url');
-var utils    = require('./utils');
+var _         = require('lodash');
+var access    = require('safe-access');
+var async     = require('async');
+var deprecate = require('deprecate');
+var qs        = require('qs');
+var url       = require('url');
+var utils     = require('./utils');
 
 /**
 * Initializes router
@@ -169,37 +170,6 @@ RouterExpress.prototype.injectMw = function (req, res, middleware, callback) {
 };
 
 /**
- * Get params from url by regex
- *
- * @param {String} path  - url to parse
- * @param {Object} route - RouterExpress object
- * @returns {Object}     - Params container
- */
-
-function getRegexParams (path, route) {
-  var regexUrl = access(route, 'regexUrl');
-  var regexParams = access(route, 'regexParams');
-  path = path.split('?').shift();
-
-  if (!regexUrl || !regexParams) { return {}; }
-
-  var routeRegex = new RegExp(route.regexUrl);
-  var matches = routeRegex.exec(path);
-  var params = {};
-
-  _.each(regexParams, function (param, i) {
-    var matchName = matches[i+1];
-    if (matchName[matchName.length-1] == '-') {
-      matchName = matchName.slice(0, -1);
-    }
-
-    params[param] = matchName;
-  });
-
-  return params;
-}
-
-/**
 * Gets default params, overrides with route params
 *
 * @this {RouterExpress}
@@ -211,7 +181,7 @@ function getRegexParams (path, route) {
 RouterExpress.prototype.fetchParams = function (request, route) {
   "use strict";
 
-  var regexParams = getRegexParams(request.path, route);
+  var regexParams = utils.getRegexParams(request.path, route);
 
   var routeParams = route.params || {},
     defaultParams = _.mapValues(routeParams, 'default');
@@ -313,62 +283,31 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
 };
 
 /**
-* Adds param?
-*/
-
-RouterExpress.prototype.addParamToParams = function (params, name, value) {
-  "use strict";
-
-  if (undefined !== value) {
-    params[name] = value;
-  } else {
-    if (params.hasOwnProperty(name)) {
-      delete params[name];
-    }
-  }
-  return params;
-};
-
-/**
 * Updates a url based on a parameter and its value
 * If no value specified, the parameter is removed from url
 *
 * @this {RouterExpress}
 * @param {string} baseurl The url to update
-* @param {string} param Name of the parameter to update
+* @param {string|array} param name or names array of the parameter to update
 * @param {primitive} value Value of the parameter, empty if to remove parameter
 * @returns {string} New url
 */
 
-RouterExpress.prototype.updateUrlWithParam = function (baseurl, param, value, route) {
+RouterExpress.prototype.updateUrlWithParam = function (baseurl, params, value, route) {
   "use strict";
 
-  var parsedUrl = url.parse(baseurl, true),
-    regexParams = getRegexParams(baseurl, route),
-    query = _.merge(parsedUrl.query, regexParams),
-    pathname = parsedUrl.pathname,
-    updatedParams;
+  var allUrlParams = utils.getParamsFromUrl(baseurl, route);
 
-  if (route === undefined) {
-    route = _.findWhere(this.routes, {url: pathname});
+  if (typeof params === 'object') {
+    _.each(params, function (param) {
+      allUrlParams = utils.checkAndAddParam(route, allUrlParams, param, value);
+    })
+  }
+  else {
+    allUrlParams = utils.checkAndAddParam(route, allUrlParams, params, value);
   }
 
-  if (!route) {
-    throw new Error ('ROUTE NOT FOUND: url=' + baseurl + ' param=' + param);
-  }
-
-  // Checking default param value, empty if value is default
-  if (_.has(route, 'params')) {
-    if (_.has(route.params, param)) {
-      if (value === route.params[param].default) {
-        value = undefined;
-      }
-    }
-  }
-
-  updatedParams = this.addParamToParams(query, param, value);
-
-  return this.createUrl(route.name, updatedParams);
+  return this.createUrl(route.name, allUrlParams);
 };
 
 module.exports = RouterExpress;

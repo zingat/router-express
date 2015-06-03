@@ -1,6 +1,6 @@
 {
   "name": "router-express",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Yet another routing for Express",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,9 @@
     "reverse",
     "app"
   ],
-  "author": "Ozgur Yasin Aydin",
+  "author": {
+    "name": "Ozgur Yasin Aydin"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/yasinaydin/router-express/issues"
