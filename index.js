@@ -9,7 +9,6 @@
 var _         = require('lodash');
 var access    = require('safe-access');
 var async     = require('async');
-var deprecate = require('deprecate');
 var qs        = require('qs');
 var url       = require('url');
 var utils     = require('./utils');
