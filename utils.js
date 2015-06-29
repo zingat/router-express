@@ -79,10 +79,6 @@ utils.getParamsFromUrl = function (inputUrl, route) {
 
 utils.getRegexParams = function (path, route) {
 
-  if (!route) {
-    throw new Error('Route not found. Path: ' + path);
-  }
-
   var regexUrl = access(route, 'regexUrl');
   var regexParams = access(route, 'regexParams');
   path = path.split('?').shift();
