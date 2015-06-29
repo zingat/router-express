@@ -78,6 +78,11 @@ utils.getParamsFromUrl = function (inputUrl, route) {
  */
 
 utils.getRegexParams = function (path, route) {
+
+  if (!route) {
+    throw new Error('Route not found. Path: ' + path);
+  }
+
   var regexUrl = access(route, 'regexUrl');
   var regexParams = access(route, 'regexParams');
   path = path.split('?').shift();
@@ -88,10 +93,16 @@ utils.getRegexParams = function (path, route) {
   var matches = routeRegex.exec(path);
   var params = {};
 
+  if (!matches) {
+    throw new Error('No matches found for path: ' + path + '. route.name: ' + route.name);
+  }
+
   _.each(regexParams, function (param, i) {
     var matchName = matches[i+1];
-    if (matchName[matchName.length-1] == '-') {
-      matchName = matchName.slice(0, -1);
+    if (matchName) {
+      if (matchName[matchName.length-1] == '-') {
+        matchName = matchName.slice(0, -1);
+      }
     }
 
     params[param] = matchName;
