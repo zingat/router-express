@@ -9,6 +9,7 @@
 var _         = require('lodash');
 var access    = require('safe-access');
 var async     = require('async');
+var path      = require('path');
 var qs        = require('qs');
 var url       = require('url');
 var utils     = require('./utils');
@@ -22,11 +23,12 @@ var utils     = require('./utils');
 * @param {object} controller Controller object
 */
 
-function RouterExpress(routes, controller) {
+function RouterExpress(routes, controller, modulesDir) {
   "use strict";
 
   this.controller = controller;
   this.routes = routes;
+  this.modulesDir = modulesDir;
 }
 
 /**
@@ -126,23 +128,50 @@ RouterExpress.prototype.parseOrderedRoutes = function (app, orderedRoutes, that,
 RouterExpress.prototype.injectRoute = function (app, route, that) {
   "use strict";
 
-  if (!(_.has(route, 'action'))) {
+  var routeAction = access(route, 'action'); //@TODO: Will deprecate
+  var routeActionFile = access(route, 'actionFile'); //@TODO: Will rename to action
+  var method = route.method || 'get';
+  var bindUrl = route.regexUrl || route.url;
+
+  if (!routeAction && !routeActionFile) {
     throw new Error('Route does not have an action: ' + route.name);
   }
 
-  var method = route.method || 'get';
+  if (routeAction && routeActionFile) {
+    throw new Error('Route cannot have both action and actionFile properties: ' + route.name);
+  }
 
-  var url = route.regexUrl || route.url;
+  if (!bindUrl) {
+    throw new Error('Route does not have a URL to bind: ' + route.name);
+  }
 
-  app[method](url, function (req, res) {
+
+
+
+
+
+  app[method](bindUrl, function (req, res) {
     res.params = that.fetchParams(req, route);
 
     that.injectMw(req, res, that.middleware, function (req, res) {
-      if (!(_.has(that.controller, route.action))) {
-        throw new Error('Controller not found: ' + route.action);
+
+      if (routeAction) {
+        if (!(_.has(that.controller, route.action))) {
+          throw new Error('Controller not found: ' + route.action);
+        }
+
+        that.controller[route.action](req, res);
       }
 
-      that.controller[route.action](req, res);
+      if (routeActionFile) {
+        var routeActionFilePath = path.join(that.modulesDir, routeActionFile);
+
+        try {
+          require(routeActionFilePath)(req, res);
+        } catch (e) {
+          throw new Error('Route action file cannot be loaded: ' + route.name);
+        }
+      }
     });
   });
 };
