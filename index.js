@@ -20,13 +20,11 @@ var utils     = require('./utils');
 * @constructor
 * @this {RouterExpress}
 * @param {object} routes Route object
-* @param {object} controller Controller object
 */
 
-function RouterExpress(routes, controller, modulesDir) {
+function RouterExpress(routes, modulesDir) {
   "use strict";
 
-  this.controller = controller;
   this.routes = routes;
   this.modulesDir = modulesDir;
 }
@@ -156,11 +154,7 @@ RouterExpress.prototype.injectRoute = function (app, route, that) {
     that.injectMw(req, res, that.middleware, function (req, res) {
 
       if (routeAction) {
-        if (!(_.has(that.controller, route.action))) {
-          throw new Error('Controller not found: ' + route.action);
-        }
-
-        that.controller[route.action](req, res);
+        throw new Error('action is deprecated');
       }
 
       if (routeActionFile) {
