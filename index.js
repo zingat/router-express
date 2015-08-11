@@ -163,7 +163,7 @@ RouterExpress.prototype.injectRoute = function (app, route, that) {
         try {
           require(routeActionFilePath)(req, res);
         } catch (e) {
-          throw new Error('Route action file cannot be loaded: ' + route.name);
+          throw new Error('Route action file cannot be loaded: ' + route.name + '. Error: ' + e.stack || e);
         }
       }
     });
