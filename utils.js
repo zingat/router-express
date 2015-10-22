@@ -24,7 +24,7 @@ var utils = {};
 utils.addParamToParams = function (params, name, value) {
   "use strict";
 
-  if (undefined !== value) {
+  if (undefined !== value && '' !== value) {
     params[name] = value;
   } else {
     if (params.hasOwnProperty(name)) {
@@ -88,10 +88,6 @@ utils.getRegexParams = function (path, route) {
   var routeRegex = new RegExp(route.regexUrl);
   var matches = routeRegex.exec(path);
   var params = {};
-
-  if (!matches) {
-    throw new Error('No matches found for path: ' + path + '. route.name: ' + route.name);
-  }
 
   _.each(regexParams, function (param, i) {
     var matchName = matches[i+1];

@@ -32,6 +32,7 @@ describe('addParamToParams:', function () {
 
   it('should delete a param', function () {
     assert.deepEqual({}, utils.addParamToParams({foo: 'bar'}, 'foo', undefined));
+    assert.deepEqual({}, utils.addParamToParams({foo: 'bar'}, 'foo', ''));
   });
 });
 
