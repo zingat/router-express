@@ -244,6 +244,18 @@ RouterExpress.prototype.createUrlQuery = function (params, filters) {
 };
 
 /**
+ * Gets a route by its name
+ *
+ * @param   {string} routeName
+ * @returns {object}
+ */
+RouterExpress.prototype.getRoute = function (routeName) {
+  "use strict";
+
+  return _.findWhere(this.routes, {name: routeName});
+}
+
+/**
 * Creates a URL based on route name and parameters
 *
 * @this {RouterExpress}
