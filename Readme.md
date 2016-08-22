@@ -4,7 +4,7 @@
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Build Status][travis-image]][travis-url] 
 [![dependency status][deps-svg]][deps-url]
-[![dev dependency status][dev-deps-svg]][dev-deps-url]
+[![Code Climate](https://codeclimate.com/github/yasinaydin/router-express/badges/gpa.svg)](https://codeclimate.com/github/yasinaydin/router-express)
 
 ```js
 var express = require('express')
@@ -37,8 +37,6 @@ npm install router-express
 * Parameter injection and default parameters
 * HTTP methods support
 
-
-
 [deps-svg]: http://david-dm.org/yasinaydin/router-express/status.svg
 [deps-url]: http://david-dm.org/yasinaydin/router-express
 [dev-deps-svg]: https://david-dm.org/yasinaydin/router-express/dev-status.svg
@@ -49,4 +47,3 @@ npm install router-express
 [npm-url]: https://npmjs.org/package/router-express
 [travis-image]: https://img.shields.io/travis/yasinaydin/router-express/master.svg
 [travis-url]: https://travis-ci.org/yasinaydin/router-express
-
