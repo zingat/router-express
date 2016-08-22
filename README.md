@@ -7,7 +7,30 @@
 
 [![npm badge][npm-badge-png]][npm-url]
 
-Yet another routing for Express.
+```js
+var express = require('express')
+var router-express = require('router-express')
+
+var app = express()
+
+var routes = [
+  {
+    name: 'homepage',
+    method: 'get',
+    url: '/',
+    module: 'static',
+    action: 'home'
+  }
+]
+
+var Router = new router-express(routes, './modules')
+Router.bind(app)
+```
+
+### Install
+```sh
+npm install router-express
+```
 
 ### Features
 
@@ -16,47 +39,6 @@ Yet another routing for Express.
 * Parameter injection and default parameters
 * HTTP methods support
 
-### Install
-
-```sh
-npm install router-express
-```
-
-### Basic usage
-
-```js
-// Define app
-var express = require('express');
-var app = express();
-
-// Define routes
-var routes = [{
-    name: 'homepage',
-    url: '/',
-    action: 'home',
-}];
-
-// Define actions
-var actions = {
-    home: function (request, response) {
-      res.end('Welcome to homepage with router-express');
-    }
-};
-
-// Initialize router
-var routerexpress = require('router-express');
-var router = new routerexpress(routes, actions);
-
-// Apply route
-router.apply(app);
-```
-
-### Advanced features
-
-* [Creating URLs](https://github.com/yasinaydin/router-express/wiki/createurl)
-* [Updating URLs](https://github.com/yasinaydin/router-express/wiki/updateurl)
-* [Getting parameters](https://github.com/yasinaydin/router-express/wiki/getparams)
-* [Limiting parameters](https://github.com/yasinaydin/router-express/wiki/limitparams)
 
 
 [deps-svg]: http://david-dm.org/yasinaydin/router-express/status.svg
