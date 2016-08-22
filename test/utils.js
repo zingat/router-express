@@ -203,6 +203,60 @@ describe('Unit::utils.injectMiddleware', function () {
   })
 })
 
+// injectParamsToRoute
+
+describe('Unit::utils.injectParamsToRoute', function () {
+  var route = {
+    url: '/foo'
+  }
+
+  it('should work without any params', function () {
+    assert.strictEqual(utils.injectParamsToRoute(route, {}), '/foo')
+  })
+
+  it('should add params', function () {
+    assert.strictEqual(utils.injectParamsToRoute(route, {bar: 123}), '/foo?bar=123')
+  })
+
+  it('should not add params with default value', function () {
+    var routeWithDefaults = {
+      url: '/foo',
+      params: {
+        baz: { default: 456 }
+      }
+    }
+
+    assert.strictEqual(utils.injectParamsToRoute(routeWithDefaults, {baz: 456}), '/foo')
+  })
+
+  it('should override regex path', function () {
+    var routeWithRegexPath = {
+      url: '/foo/:city?'
+    }
+
+    assert.strictEqual(utils.injectParamsToRoute(routeWithRegexPath, {city: 'istanbul'}), '/foo/istanbul')
+  })
+
+  it('should try everything at once', function () {
+    var routeEmAll = {
+      url: '/example/:foo?',
+      params: {
+        bar: { default: 123 },
+        baz: { default: 456 }
+      }
+    }
+
+    var params = {
+      foo: 'abc',
+      bar: 123,
+      baz: 789,
+      fubar: 'quq'
+    }
+
+    assert.strictEqual(utils.injectParamsToRoute(routeEmAll, params), '/example/abc?baz=789&fubar=quq')
+  })
+})
+
 // parseOrders
 
 describe('Unit::utils.parseOrders', function () {

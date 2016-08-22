@@ -182,6 +182,41 @@ utils.injectMw = function (req, res, middleware, callback) {
 }
 
 /**
+ * Inject parameters to route
+ *
+ * @param {object} routeObject
+ * @param {object} params
+ * @returns {string}
+ */
+utils.injectParamsToRoute = function (routeObject, params) {
+  var url = routeObject.url
+
+  var routeParams = _.get(routeObject, 'params')
+  var routeParamsDefaultValues = _.mapValues(routeParams, 'default')
+  var filteredParams = _.omit(params, function (v, k) {
+    return routeParamsDefaultValues[k] === v
+  })
+  var extraParams = {}
+
+  _.forEach(filteredParams, function (paramValue, paramName) {
+    // If url regex has param as :param, replace it
+    if (url.search(paramName) !== -1) {
+      url = url
+        .replace(':' + paramName + '?/?', paramValue + '/')
+        .replace(':' + paramName + '?-?', paramValue + '-')
+        .replace('-?:' + paramName + '?', '-' + paramValue)
+        .replace(':' + paramName + '?', paramValue)
+        .replace(':' + paramName, paramValue)
+    } else {
+      // If not, add it to the end
+      extraParams[paramName] = paramValue
+    }
+  })
+
+  return utils.prepareUrl(url, extraParams)
+}
+
+/**
  * Groups routes by order type
  * @param {Array} routes
  * @param {Function} callback
