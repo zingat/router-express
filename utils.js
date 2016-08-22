@@ -1,5 +1,6 @@
 // Deps
 var _ = require('lodash')
+var qs = require('qs')
 var url = require('url')
 
 // Init
@@ -90,6 +91,35 @@ utils.getRegexParams = function (path, route) {
   })
 
   return params
+}
+
+/**
+* Creates url query from the provided parameters
+*   using ones mentioned in filters array only
+*
+* @param {object} params - Parameters container
+* @param {array} filters - Filters array
+* @returns {string}      - Querystring
+*/
+
+utils.createUrlQuery = function (params, filters) {
+  var resultParams = _.pick(params, filters)
+  var filteredResultParams
+
+  // Removing empty elements
+  filteredResultParams = _.reduce(resultParams, function (result, num, key) {
+    if (_.isArray(num)) {
+      num = _.compact(num)
+    }
+
+    if ((_.isArray(num) && !(_.isEmpty(num))) || (!(_.isArray(num)) && num)) {
+      result[key] = num
+    }
+
+    return result
+  }, {})
+
+  return qs.stringify(filteredResultParams)
 }
 
 /**

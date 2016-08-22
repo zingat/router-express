@@ -70,6 +70,55 @@ describe('getParamsFromUrl:', function () {
   })
 })
 
+// utils.createUrlQuery
+
+describe('utils.createUrlQuery', function () {
+  it('should select some fields normally', function () {
+    assert.deepEqual(
+      utils.createUrlQuery({a: 1, b: 2, c: 3}, ['a', 'b']),
+      'a=1&b=2'
+    )
+  })
+
+  it('should clean empty elements', function () {
+    assert.deepEqual(
+      utils.createUrlQuery({a: undefined, b: 2, c: 3}, ['a', 'b']),
+      'b=2'
+    )
+    assert.deepEqual(
+      utils.createUrlQuery({a: '', b: 2, c: 3}, ['a', 'b']),
+      'b=2'
+    )
+    assert.deepEqual(
+      utils.createUrlQuery({a: null, b: 2, c: 3}, ['a', 'b']),
+      'b=2'
+    )
+  })
+
+  it('should add arrays', function () {
+    assert.deepEqual(
+      utils.createUrlQuery({a: 1, b: [2, 3], c: 4}, ['a', 'b']),
+      'a=1&b%5B0%5D=2&b%5B1%5D=3'
+    )
+  })
+
+  it('should clean empty array elements', function () {
+    assert.deepEqual(
+      utils.createUrlQuery({a: 1, b: [2, ''], c: 4}, ['a', 'b']),
+      'a=1&b%5B0%5D=2'
+    )
+  })
+
+  it('should remove empty arrays', function () {
+    assert.deepEqual(
+      utils.createUrlQuery({a: 1, b: [null, ''], c: 4}, ['a', 'b', 'c']),
+      'a=1&c=4'
+    )
+  })
+})
+
+// utils.checkAndAddParam
+
 describe('checkAndAddParam:', function () {
   var sampleRoute = {
     regexUrl: /\/(.*)\-?satilik/,

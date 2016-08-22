@@ -193,43 +193,7 @@ RouterExpress.prototype.fetchParams = function (request, route) {
   return _.merge(defaultParams, request.query, request.params, regexParams, {route: route})
 }
 
-/**
-* Creates query for the filter for selected fields
-*
-* @this {RouterExpress}
-* @param {object} params Parameters object
-* @param {array} filters Filters array
-* @returns {string} Query string
-*/
-RouterExpress.prototype.createUrlQuery = function (params, filters) {
-  var resultParams = _.pick(params, filters)
-  var filteredResultParams
-
-  // Removing empty elements
-  filteredResultParams = _.reduce(resultParams, function (result, num, key) {
-    if (_.isArray(num)) {
-      num = _.compact(num)
-    }
-
-    if ((_.isArray(num) && !(_.isEmpty(num))) || (!(_.isArray(num)) && num)) {
-      result[key] = num
-    }
-
-    return result
-  }, {})
-
-  return qs.stringify(filteredResultParams)
-}
-
-/**
- * Gets a route by its name
- *
- * @param   {string} routeName
- * @returns {object}
- */
-RouterExpress.prototype.getRoute = function (routeName) {
-  return _.findWhere(this.routes, {name: routeName})
-}
+RouterExpress.prototype.createUrlQuery = utils.createUrlQuery
 
 /**
 * Creates a URL based on route name and parameters
