@@ -25,6 +25,9 @@
   "author": {
     "name": "Ozgur Yasin Aydin"
   },
+  "engines": {
+    "node": ">= 0.12.0"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/yasinaydin/router-express/issues"
