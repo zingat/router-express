@@ -6,7 +6,6 @@
 [![dependency status][deps-svg]][deps-url]
 [![dev dependency status][dev-deps-svg]][dev-deps-url]
 
-[![npm badge][npm-badge-png]][npm-url]
 
 ```js
 var express = require('express')
@@ -48,7 +47,6 @@ npm install router-express
 [dev-deps-url]: https://david-dm.org/yasinaydin/router-express#info=devDependencies
 [downloads-image]: http://img.shields.io/npm/dm/router-express.svg
 [downloads-url]: http://npm-stat.com/charts.html?package=router-express
-[npm-badge-png]: https://nodei.co/npm/router-express.png?downloads=true&stars=true
 [npm-version-svg]: https://img.shields.io/npm/v/router-express.svg
 [npm-url]: https://npmjs.org/package/router-express
 [travis-image]: https://img.shields.io/travis/yasinaydin/router-express/master.svg
