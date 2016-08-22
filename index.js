@@ -21,32 +21,6 @@ function RouterExpress (routes, modulesDir) {
 }
 
 /**
- * Groups routes by order type
- * @param {Array} routes
- * @param {Function} callback
- */
-
-RouterExpress.prototype.parseOrders = function (routes, callback) {
-  var noOrderRoutes = _.filter(routes, function (route) {
-    return !(_.has(route, 'order')) && !(_.has(route, 'lastOrder'))
-  })
-
-  var orderRoutes = _.groupBy(_.filter(routes, function (route) {
-    return _.has(route, 'order')
-  }), function (route) {
-    return route.order
-  })
-
-  var lastOrderRoutes = _.groupBy(_.filter(routes, function (route) {
-    return _.has(route, 'lastOrder')
-  }), function (route) {
-    return route.lastOrder
-  })
-
-  callback(noOrderRoutes, orderRoutes, lastOrderRoutes)
-}
-
-/**
 * Binds routes to actions
 *
 * @this {RouterExpress}
@@ -62,7 +36,7 @@ RouterExpress.prototype.bind = function (app, middleware) {
 
   var that = this
 
-  this.parseOrders(this.routes, function (noOrderRoutes, orderRoutes, lastOrderRoutes) {
+  utils.parseOrders(this.routes, function (noOrderRoutes, orderRoutes, lastOrderRoutes) {
     that.parseOrderedRoutes(app, orderRoutes, that, function () {
       async.forEach(noOrderRoutes, function (route, midCallback) {
         that.injectRoute(app, route, that)

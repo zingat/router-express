@@ -136,6 +136,33 @@ describe('Unit::utils.getRegexParams', function () {
   })
 })
 
+// parseOrders
+
+describe('Unit::utils.parseOrders', function () {
+  it('should work normally', function (done) {
+    var routes = [
+      {
+        url: '/foo',
+        order: 1
+      },
+      {
+        url: '/bar'
+      },
+      {
+        url: '/baz',
+        lastOrder: 3
+      }
+    ]
+
+    utils.parseOrders(routes, function (no, or, last) {
+      assert.deepEqual(no, [ { url: '/bar' } ])
+      assert.deepEqual(or, { '1': [ { url: '/foo', order: 1 } ] })
+      assert.deepEqual(last, { '3': [ { url: '/baz', lastOrder: 3 } ] })
+      done()
+    })
+  })
+})
+
 // prepareUrl
 
 describe('Unit::utils.prepareUrl', function () {

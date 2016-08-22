@@ -45,6 +45,57 @@ utils.checkAndAddParam = function (route, allParams, param, value) {
 }
 
 /**
+ * Cleans URL, mostly for SEO
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+
+utils.cleanUrl = function (url) {
+  url = url
+  .replace(/\-?:[^\-\?]*\-?\??/g, '') // https://regex101.com/r/cK7yE5/1
+  .replace(/\/{2,}/g, '/') // Tum cift // lari siliyor
+  .replace(/\/-/g, '/') // -/ lari siliyor
+  .replace(/\/-(.*)/g, '/$1') // /-.... > / (tireyle baslayani eliyor)
+  .replace(/(-:.*)(?=\?)/g, '') // /satilik-:var? > /satilik
+  .replace(/\/:.*\?-/g, '') // /:var?-satilik > /satilik
+  .replace(/\/(.*)-$/g, '/$1') // /izmir-satilik- > /izmir-satilik
+  .replace(/\/.*(-)\?.*$/g, '') // /izmir-satilik-?listType=table > /izmir-satilik?listType=table
+  .replace(/\?+/g, '') // /satilik?? > /satilik?
+
+  return url
+}
+
+/**
+* Creates url query from the provided parameters
+*   using ones mentioned in filters array only
+*
+* @param {object} params - Parameters container
+* @param {array} filters - Filters array
+* @returns {string}      - Querystring
+*/
+
+utils.createUrlQuery = function (params, filters) {
+  var resultParams = _.pick(params, filters)
+  var filteredResultParams
+
+  // Removing empty elements
+  filteredResultParams = _.reduce(resultParams, function (result, num, key) {
+    if (_.isArray(num)) {
+      num = _.compact(num)
+    }
+
+    if ((_.isArray(num) && !(_.isEmpty(num))) || (!(_.isArray(num)) && num)) {
+      result[key] = num
+    }
+
+    return result
+  }, {})
+
+  return qs.stringify(filteredResultParams)
+}
+
+/**
  * Gets query and regex params from url
  *
  * @param {String} inputUrl
@@ -94,32 +145,29 @@ utils.getRegexParams = function (path, route) {
 }
 
 /**
-* Creates url query from the provided parameters
-*   using ones mentioned in filters array only
-*
-* @param {object} params - Parameters container
-* @param {array} filters - Filters array
-* @returns {string}      - Querystring
-*/
+ * Groups routes by order type
+ * @param {Array} routes
+ * @param {Function} callback
+ */
 
-utils.createUrlQuery = function (params, filters) {
-  var resultParams = _.pick(params, filters)
-  var filteredResultParams
+utils.parseOrders = function (routes, callback) {
+  var noOrderRoutes = _.filter(routes, function (route) {
+    return !(_.has(route, 'order')) && !(_.has(route, 'lastOrder'))
+  })
 
-  // Removing empty elements
-  filteredResultParams = _.reduce(resultParams, function (result, num, key) {
-    if (_.isArray(num)) {
-      num = _.compact(num)
-    }
+  var orderRoutes = _.groupBy(_.filter(routes, function (route) {
+    return _.has(route, 'order')
+  }), function (route) {
+    return route.order
+  })
 
-    if ((_.isArray(num) && !(_.isEmpty(num))) || (!(_.isArray(num)) && num)) {
-      result[key] = num
-    }
+  var lastOrderRoutes = _.groupBy(_.filter(routes, function (route) {
+    return _.has(route, 'lastOrder')
+  }), function (route) {
+    return route.lastOrder
+  })
 
-    return result
-  }, {})
-
-  return qs.stringify(filteredResultParams)
+  callback(noOrderRoutes, orderRoutes, lastOrderRoutes)
 }
 
 /**
@@ -140,25 +188,6 @@ utils.prepareUrl = function (url, params) {
 
   // Finalizing
   return url + urlSeperator + urlSuffix
-}
-
-/**
- * Url cleaner
- */
-
-utils.cleanUrl = function (url) {
-  url = url
-  .replace(/\-?:[^\-\?]*\-?\??/g, '') // https://regex101.com/r/cK7yE5/1
-  .replace(/\/{2,}/g, '/') // Tum cift // lari siliyor
-  .replace(/\/-/g, '/') // -/ lari siliyor
-  .replace(/\/-(.*)/g, '/$1') // /-.... > / (tireyle baslayani eliyor)
-  .replace(/(-:.*)(?=\?)/g, '') // /satilik-:var? > /satilik
-  .replace(/\/:.*\?-/g, '') // /:var?-satilik > /satilik
-  .replace(/\/(.*)-$/g, '/$1') // /izmir-satilik- > /izmir-satilik
-  .replace(/\/.*(-)\?.*$/g, '') // /izmir-satilik-?listType=table > /izmir-satilik?listType=table
-  .replace(/\?+/g, '') // /satilik?? > /satilik?
-
-  return url
 }
 
 // Exports
