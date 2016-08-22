@@ -1,5 +1,4 @@
-/* jslint nomen: true, todo: true, indent: 2 */
-/* global require, module, __dirname, describe, it */
+/* global describe, it */
 
 var assert = require('assert')
 var utils = require('../utils')

@@ -1,6 +1,3 @@
-/* jslint nomen: true, todo: true, indent: 2, regexp: true */
-/* global require, console, module */
-
 // Dependencies
 var _ = require('lodash')
 var async = require('async')
