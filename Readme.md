@@ -8,7 +8,6 @@
 
 ```js
 var express = require('express')
-var path = require('path')
 var routerExpress = require('router-express')
 
 var app = express()
@@ -22,8 +21,7 @@ var routes = [
   }
 ]
 
-global.Router = new routerExpress(routes, path.join(__dirname, './modules'))
-
+global.Router = new routerExpress(routes)
 Router.bind(app)
 ```
 
