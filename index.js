@@ -7,7 +7,6 @@
 */
 
 var _         = require('lodash');
-var access    = require('safe-access');
 var async     = require('async');
 var path      = require('path');
 var qs        = require('qs');
@@ -100,7 +99,7 @@ RouterExpress.prototype.parseOrderedRoutes = function (app, orderedRoutes, that,
   "use strict";
 
   async.forEach(Object.keys(orderedRoutes), function (order, midCallback) {
-    var routes = access(orderedRoutes, order);
+    var routes = _.get(orderedRoutes, order);
 
     _.forEach(routes, function (route) {
       that.injectRoute(app, route, that);
@@ -126,8 +125,8 @@ RouterExpress.prototype.parseOrderedRoutes = function (app, orderedRoutes, that,
 RouterExpress.prototype.injectRoute = function (app, route, that) {
   "use strict";
 
-  var routeAction = access(route, 'action'); //@TODO: Will deprecate
-  var routeActionFile = access(route, 'actionFile'); //@TODO: Will rename to action
+  var routeAction = _.get(route, 'action'); //@TODO: Will deprecate
+  var routeActionFile = _.get(route, 'actionFile'); //@TODO: Will rename to action
   var method = route.method || 'get';
   var bindUrl = route.regexUrl || route.url;
 
@@ -279,7 +278,7 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
   }
 
   var url                     = routeObject.url,
-    routeParams               = access(routeObject, 'params'),
+    routeParams               = _.get(routeObject, 'params'),
     routeParamsDefaultValues  = _.mapValues(routeParams, 'default'),
     filteredParams            = _.omit(params, function (v, k) {
       return routeParamsDefaultValues[k] === v;

@@ -3,7 +3,6 @@
  */
 
 var _      = require('lodash');
-var access = require('safe-access');
 var url    = require('url');
 
 /**
@@ -45,7 +44,7 @@ utils.addParamToParams = function (params, name, value) {
  */
 
 utils.checkAndAddParam = function (route, allParams, param, value) {
-  var defaultParamValue = access(route, 'params.' + param + '.default');
+  var defaultParamValue = _.get(route, 'params.' + param + '.default');
 
   if (defaultParamValue === value) { value = undefined; }
 
@@ -79,8 +78,8 @@ utils.getParamsFromUrl = function (inputUrl, route) {
 
 utils.getRegexParams = function (path, route) {
 
-  var regexUrl = access(route, 'regexUrl');
-  var regexParams = access(route, 'regexParams');
+  var regexUrl = _.get(route, 'regexUrl');
+  var regexParams = _.get(route, 'regexParams');
   path = path.split('?').shift();
 
   if (!regexUrl || !regexParams) { return {}; }
