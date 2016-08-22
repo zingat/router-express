@@ -5,7 +5,6 @@
 var _ = require('lodash')
 var async = require('async')
 var path = require('path')
-var qs = require('qs')
 var utils = require('./utils')
 
 /**
@@ -223,9 +222,6 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
     return routeParamsDefaultValues[k] === v
   })
   var extraParams = {}
-  var urlSuffix
-  var urlSeperator
-  var finalUrl
 
   _.forEach(filteredParams, function (paramValue, paramName) {
     // If url regex has param as :param, replace it
@@ -242,16 +238,7 @@ RouterExpress.prototype.createUrl = function (routeName, params) {
     }
   })
 
-  // Removing all unused url parameters
-  url = utils.cleanUrl(url)
-
-  // Adding query params to the end
-  urlSuffix = qs.stringify(extraParams)
-  urlSeperator = urlSuffix ? '?' : ''
-
-  // Finalizing
-  finalUrl = url + urlSeperator + urlSuffix
-  return finalUrl
+  return utils.prepareUrl(url, extraParams)
 }
 
 /**

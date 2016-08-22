@@ -117,6 +117,22 @@ describe('utils.createUrlQuery', function () {
   })
 })
 
+// utils.prepareUrl
+
+describe('prepareUrl', function () {
+  it('should work normally', function () {
+    assert.strictEqual(utils.prepareUrl('/list', {a: 1}), '/list?a=1')
+  })
+
+  it('should support empty params', function () {
+    assert.strictEqual(utils.prepareUrl('/list', {}), '/list')
+  })
+
+  it('should clean the url', function () {
+    assert.strictEqual(utils.prepareUrl('/list-', {b: 2}), '/list?b=2')
+  })
+})
+
 // utils.checkAndAddParam
 
 describe('checkAndAddParam:', function () {

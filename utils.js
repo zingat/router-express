@@ -123,6 +123,26 @@ utils.createUrlQuery = function (params, filters) {
 }
 
 /**
+ * Prepares url by cleaning its base and adding params
+ *
+ * @param {string} url
+ * @param {object} params
+ * @returns {string}
+ */
+
+utils.prepareUrl = function (url, params) {
+  // Removing all unused url parameters
+  url = utils.cleanUrl(url)
+
+  // Adding query params to the end
+  var urlSuffix = qs.stringify(params)
+  var urlSeperator = urlSuffix ? '?' : ''
+
+  // Finalizing
+  return url + urlSeperator + urlSuffix
+}
+
+/**
  * Url cleaner
  */
 
