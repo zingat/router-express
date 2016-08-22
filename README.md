@@ -6,11 +6,6 @@
 [![License][license-image]][license-url]
 [![DownloadsTotal][downloads-total-image]][downloads-url]
 
-[![dependency status][deps-svg]][deps-url]
-[![dev dependency status][dev-deps-svg]][dev-deps-url]
-[![License][license-image]][license-url]
-[![Downloads][downloads-image]][downloads-url]
-
 [![npm badge][npm-badge-png]][npm-url]
 
 Yet another routing for Express.
