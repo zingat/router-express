@@ -1,8 +1,10 @@
 # router-express <sup>[![Version Badge][npm-version-svg]][npm-url]</sup>
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c2c014171cc8417eba0239160af12ad9)](https://www.codacy.com/app/yasin/router-express?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yasinaydin/router-express&amp;utm_campaign=Badge_Grade)
 [![Build Status][travis-image]][travis-url] 
 [![dependency status][deps-svg]][deps-url]
 [![dev dependency status][dev-deps-svg]][dev-deps-url]
+
 [![License][license-image]][license-url]
 [![DownloadsTotal][downloads-total-image]][downloads-url]
 
