@@ -9,7 +9,8 @@
 
 ```js
 var express = require('express')
-var router-express = require('router-express')
+var path = require('path')
+var routerExpress = require('router-express')
 
 var app = express()
 
@@ -18,12 +19,11 @@ var routes = [
     name: 'homepage',
     method: 'get',
     url: '/',
-    module: 'static',
-    action: 'home'
+    module: 'static/home'
   }
 ]
 
-var Router = new router-express(routes, './modules')
+var Router = new routerExpress(routes, path.join(__dirname, './modules'))
 Router.bind(app)
 ```
 
