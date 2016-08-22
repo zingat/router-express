@@ -14,7 +14,8 @@ var utils = require('./utils')
 
 function RouterExpress (routes, modulesDir) {
   this.routes = routes
-  this.modulesDir = modulesDir
+
+  this.modulesDir = modulesDir || process.cwd() + '/modules'
 }
 
 /**
@@ -86,41 +87,32 @@ RouterExpress.prototype.parseOrderedRoutes = function (app, orderedRoutes, that,
  * @param {Object} route
  * @param {Object} that - RouterExpress Object
  */
-
 RouterExpress.prototype.injectRoute = function (app, route, that) {
-  var routeAction = _.get(route, 'action') // @TODO: Will deprecate
-  var routeActionFile = _.get(route, 'actionFile') // @TODO: Will rename to action
-  var method = route.method || 'get'
+  if (_.get(route, 'action')) {
+    throw new Error('route.action is deprecated. Please use route.method')
+  }
+
+  var module = _.get(route, 'module') || _.get(route, 'actionFile')
+  if (!module) {
+    throw new Error('route.module not defined for: ' + route.name)
+  }
+  var actionFile = path.join(that.modulesDir, module)
+
   var bindUrl = route.regexUrl || route.url
-
-  if (!routeAction && !routeActionFile) {
-    throw new Error('Route does not have an action: ' + route.name)
-  }
-
-  if (routeAction && routeActionFile) {
-    throw new Error('Route cannot have both action and actionFile properties: ' + route.name)
-  }
-
   if (!bindUrl) {
-    throw new Error('Route does not have a URL to bind: ' + route.name)
+    throw new Error('route.url missing for: ' + route.name)
   }
+
+  var method = route.method || 'get'
 
   app[method](bindUrl, function (req, res) {
     res.params = utils.fetchParams(req, route)
 
     utils.injectMw(req, res, that.middleware, function (req, res) {
-      if (routeAction) {
-        throw new Error('action is deprecated')
-      }
-
-      if (routeActionFile) {
-        var routeActionFilePath = path.join(that.modulesDir, routeActionFile)
-
-        try {
-          require(routeActionFilePath)(req, res)
-        } catch (e) {
-          throw new Error('Route action file cannot be loaded: ' + route.name + '. Error: ' + e.stack || e)
-        }
+      try {
+        require(actionFile)(req, res)
+      } catch (e) {
+        throw new Error('Route action file cannot be loaded: ' + route.name + '. Error: ' + e.stack || e)
       }
     })
   })
