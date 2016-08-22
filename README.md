@@ -1,5 +1,11 @@
 # router-express <sup>[![Version Badge][npm-version-svg]][npm-url]</sup>
 
+[![Build Status][travis-image]][travis-url] 
+[![dependency status][deps-svg]][deps-url]
+[![dev dependency status][dev-deps-svg]][dev-deps-url]
+[![License][license-image]][license-url]
+[![DownloadsTotal][downloads-total-image]][downloads-url]
+
 [![dependency status][deps-svg]][deps-url]
 [![dev dependency status][dev-deps-svg]][dev-deps-url]
 [![License][license-image]][license-url]
@@ -58,18 +64,19 @@ router.apply(app);
 * [Getting parameters](https://github.com/yasinaydin/router-express/wiki/getparams)
 * [Limiting parameters](https://github.com/yasinaydin/router-express/wiki/limitparams)
 
-[npm-version-svg]: http://vb.teelaun.ch/yasinaydin/router-express.svg
-[npm-url]: https://npmjs.org/package/router-express
+
 [deps-svg]: http://david-dm.org/yasinaydin/router-express/status.svg
 [deps-url]: http://david-dm.org/yasinaydin/router-express
 [dev-deps-svg]: https://david-dm.org/yasinaydin/router-express/dev-status.svg
 [dev-deps-url]: https://david-dm.org/yasinaydin/router-express#info=devDependencies
-[license-image]: http://img.shields.io/npm/l/router-express.svg
-[license-url]: LICENSE
 [downloads-image]: http://img.shields.io/npm/dm/router-express.svg
 [downloads-url]: http://npm-stat.com/charts.html?package=router-express
+[downloads-total-image]: https://img.shields.io/npm/dt/router-express.svg?maxAge=2592000
+[license-image]: http://img.shields.io/npm/l/router-express.svg
+[license-url]: LICENSE
 [npm-badge-png]: https://nodei.co/npm/router-express.png?downloads=true&stars=true&downloadRank=true
-
-
+[npm-version-svg]: https://img.shields.io/npm/v/router-express.svg
+[npm-url]: https://npmjs.org/package/router-express
 [travis-image]: https://img.shields.io/travis/yasinaydin/router-express/master.svg
 [travis-url]: https://travis-ci.org/yasinaydin/router-express
+
