@@ -69,7 +69,7 @@ router.apply(app);
 [downloads-total-image]: https://img.shields.io/npm/dt/router-express.svg?maxAge=2592000
 [license-image]: http://img.shields.io/npm/l/router-express.svg
 [license-url]: LICENSE
-[npm-badge-png]: https://nodei.co/npm/router-express.png?downloads=true&stars=true&downloadRank=true
+[npm-badge-png]: https://nodei.co/npm/router-express.png?downloads=true&stars=true
 [npm-version-svg]: https://img.shields.io/npm/v/router-express.svg
 [npm-url]: https://npmjs.org/package/router-express
 [travis-image]: https://img.shields.io/travis/yasinaydin/router-express/master.svg
