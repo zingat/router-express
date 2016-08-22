@@ -56,7 +56,7 @@ describe('Unit::utils.cleanUrl', function () {
   })
 })
 
-// utils.createUrlQuery
+// createUrlQuery
 
 describe('Unit::utils.createUrlQuery', function () {
   it('should select some fields normally', function () {
@@ -90,6 +90,46 @@ describe('Unit::utils.createUrlQuery', function () {
     assert.deepEqual(
       utils.createUrlQuery({a: 1, b: [null, ''], c: 4}, ['a', 'b', 'c']),
       'a=1&c=4'
+    )
+  })
+})
+
+// fetchParams
+
+describe('Unit::utils.fetchParams', function () {
+  var route = {
+    params: {
+      bar: { default: 123 }
+    }
+  }
+
+  it('should run empty ', function () {
+    assert.deepEqual(utils.fetchParams({path: '/foo'}, {}), {route: {}})
+  })
+
+  it('should get default values ', function () {
+    assert.deepEqual(
+      utils.fetchParams({path: '/foo'}, route),
+      {route: route, bar: 123}
+    )
+  })
+
+  it('should override query,params > default ', function () {
+    assert.deepEqual(
+      utils.fetchParams({path: '/foo', query: {bar: 234}}, route),
+      {route: route, bar: 234}
+    )
+
+    assert.deepEqual(
+      utils.fetchParams({path: '/foo', params: {bar: 345}}, route),
+      {route: route, bar: 345}
+    )
+  })
+
+  it('should override params > query', function () {
+    assert.deepEqual(
+      utils.fetchParams({path: '/foo', query: {bar: 456}, params: {bar: 567}}, route),
+      {route: route, bar: 567}
     )
   })
 })

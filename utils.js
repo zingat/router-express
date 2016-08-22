@@ -96,6 +96,24 @@ utils.createUrlQuery = function (params, filters) {
 }
 
 /**
+* Gets default params, overrides with route params
+*
+* @this {RouterExpress}
+* @param {object} request - Express request
+* @param {object} route - Route object
+* @returns {object} Parameters object
+*/
+
+utils.fetchParams = function (request, route) {
+  var regexParams = utils.getRegexParams(request.path, route)
+
+  var routeParams = route.params || {}
+  var defaultParams = _.mapValues(routeParams, 'default')
+
+  return _.merge(defaultParams, request.query, request.params, regexParams, {route: route})
+}
+
+/**
  * Gets query and regex params from url
  *
  * @param {String} inputUrl

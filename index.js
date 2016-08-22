@@ -109,7 +109,7 @@ RouterExpress.prototype.injectRoute = function (app, route, that) {
   }
 
   app[method](bindUrl, function (req, res) {
-    res.params = that.fetchParams(req, route)
+    res.params = utils.fetchParams(req, route)
 
     that.injectMw(req, res, that.middleware, function (req, res) {
       if (routeAction) {
@@ -146,24 +146,6 @@ RouterExpress.prototype.injectMw = function (req, res, middleware, callback) {
   } else {
     callback(req, res)
   }
-}
-
-/**
-* Gets default params, overrides with route params
-*
-* @this {RouterExpress}
-* @param {object} request - Express request
-* @param {object} route - Route object
-* @returns {object} Parameters object
-*/
-
-RouterExpress.prototype.fetchParams = function (request, route) {
-  var regexParams = utils.getRegexParams(request.path, route)
-
-  var routeParams = route.params || {}
-  var defaultParams = _.mapValues(routeParams, 'default')
-
-  return _.merge(defaultParams, request.query, request.params, regexParams, {route: route})
 }
 
 RouterExpress.prototype.createUrlQuery = utils.createUrlQuery
