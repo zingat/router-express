@@ -1,5 +1,7 @@
 # router-express <sup>[![Version Badge][npm-version-svg]][npm-url]</sup>
 
+[![Join the chat at https://gitter.im/router-express/Lobby](https://badges.gitter.im/router-express/Lobby.svg)](https://gitter.im/router-express/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![NPM Downloads][downloads-image]][downloads-url]
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status](https://coveralls.io/repos/github/yasinaydin/router-express/badge.svg?branch=master)](https://coveralls.io/github/yasinaydin/router-express?branch=master)
