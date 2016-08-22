@@ -1,11 +1,12 @@
-# router-express
+# router-express <sup>[![Version Badge][npm-version-svg]][npm-url]</sup>
 
-[![Version Badge][npm-version-svg]][npm-url]
 [![NPM Downloads][downloads-image]][downloads-url]
-[![Build Status][travis-image]][travis-url] 
+[![Build Status][travis-image]][travis-url]
+[![Coverage Status](https://coveralls.io/repos/github/yasinaydin/router-express/badge.svg?branch=master)](https://coveralls.io/github/yasinaydin/router-express?branch=master)
 [![dependency status][deps-svg]][deps-url]
 [![Code Climate](https://codeclimate.com/github/yasinaydin/router-express/badges/gpa.svg)](https://codeclimate.com/github/yasinaydin/router-express)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c2c014171cc8417eba0239160af12ad9)](https://www.codacy.com/app/yasin/router-express?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yasinaydin/router-express&amp;utm_campaign=Badge_Grade)
+[![Join the chat at https://gitter.im/router-express/Lobby](https://badges.gitter.im/router-express/Lobby.svg)](https://gitter.im/router-express/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ```js
 var express = require('express')
