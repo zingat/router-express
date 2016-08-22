@@ -1,15 +1,9 @@
-/**
- * Deps
- */
+// Deps
+var _ = require('lodash')
+var url = require('url')
 
-var _      = require('lodash');
-var url    = require('url');
-
-/**
- * Init
- */
-
-var utils = {};
+// Init
+var utils = {}
 
 /**
  * Adds or removes a param to params array
@@ -21,17 +15,15 @@ var utils = {};
  */
 
 utils.addParamToParams = function (params, name, value) {
-  "use strict";
-
-  if (undefined !== value && '' !== value) {
-    params[name] = value;
+  if (value !== undefined && value !== '') {
+    params[name] = value
   } else {
     if (params.hasOwnProperty(name)) {
-      delete params[name];
+      delete params[name]
     }
   }
-  return params;
-};
+  return params
+}
 
 /**
  * Checks a param and adds it to params array
@@ -44,11 +36,11 @@ utils.addParamToParams = function (params, name, value) {
  */
 
 utils.checkAndAddParam = function (route, allParams, param, value) {
-  var defaultParamValue = _.get(route, 'params.' + param + '.default');
+  var defaultParamValue = _.get(route, 'params.' + param + '.default')
 
-  if (defaultParamValue === value) { value = undefined; }
+  if (defaultParamValue === value) { value = undefined }
 
-  return utils.addParamToParams(allParams, param, value);
+  return utils.addParamToParams(allParams, param, value)
 }
 
 /**
@@ -60,12 +52,11 @@ utils.checkAndAddParam = function (route, allParams, param, value) {
  */
 
 utils.getParamsFromUrl = function (inputUrl, route) {
-  var parsedUrl = url.parse(inputUrl, true),
-    regexParams = utils.getRegexParams(inputUrl, route),
-    queryParams = parsedUrl.query,
-    allParams = _.merge(parsedUrl.query, regexParams);
+  var parsedUrl = url.parse(inputUrl, true)
+  var regexParams = utils.getRegexParams(inputUrl, route)
+  var allParams = _.merge(parsedUrl.query, regexParams)
 
-  return allParams;
+  return allParams
 }
 
 /**
@@ -77,29 +68,28 @@ utils.getParamsFromUrl = function (inputUrl, route) {
  */
 
 utils.getRegexParams = function (path, route) {
+  var regexUrl = _.get(route, 'regexUrl')
+  var regexParams = _.get(route, 'regexParams')
+  path = path.split('?').shift()
 
-  var regexUrl = _.get(route, 'regexUrl');
-  var regexParams = _.get(route, 'regexParams');
-  path = path.split('?').shift();
+  if (!regexUrl || !regexParams) { return {} }
 
-  if (!regexUrl || !regexParams) { return {}; }
-
-  var routeRegex = new RegExp(route.regexUrl);
-  var matches = routeRegex.exec(path);
-  var params = {};
+  var routeRegex = new RegExp(route.regexUrl)
+  var matches = routeRegex.exec(path)
+  var params = {}
 
   _.each(regexParams, function (param, i) {
-    var matchName = matches[i+1];
+    var matchName = matches[i + 1]
     if (matchName) {
-      if (matchName[matchName.length-1] == '-') {
-        matchName = matchName.slice(0, -1);
+      if (matchName[matchName.length - 1] === '-') {
+        matchName = matchName.slice(0, -1)
       }
     }
 
-    params[param] = matchName;
-  });
+    params[param] = matchName
+  })
 
-  return params;
+  return params
 }
 
 /**
@@ -108,33 +98,19 @@ utils.getRegexParams = function (path, route) {
 
 utils.cleanUrl = function (url) {
   url = url
-  //.replace(/[^\-\?]*\-?\??/g, '')
   .replace(/\-?:[^\-\?]*\-?\??/g, '') // https://regex101.com/r/cK7yE5/1
-
-  .replace(/\/{2,}/g, '\/') // Tum cift // lari siliyor
-
+  .replace(/\/{2,}/g, '/') // Tum cift // lari siliyor
   .replace(/\/-/g, '/') // -/ lari siliyor
-
   .replace(/\/-(.*)/g, '/$1') // /-.... > / (tireyle baslayani eliyor)
-
   .replace(/(-:.*)(?=\?)/g, '') // /satilik-:var? > /satilik
   .replace(/\/:.*\?-/g, '') // /:var?-satilik > /satilik
   .replace(/\/(.*)-$/g, '/$1') // /izmir-satilik- > /izmir-satilik
   .replace(/\/.*(-)\?.*$/g, '') // /izmir-satilik-?listType=table > /izmir-satilik?listType=table
-
   .replace(/\?+/g, '') // /satilik?? > /satilik?
-  //.replace(/\/\/(.*)/g, '/$1') // //.... > // (baslangictaki // i siliyor)
 
-  //.replace(/-\?/g, '') // /...:?... > /..... , may not be needed anymore
-  //.replace(/\/\?/g, '') // /.../?...  >/...., dunno where it is used
-  //.replace(/\/:[a-zA-Z]*[\?]?/g, '')
-  //.replace(/:([^}?]*)\?/g, '')
-  ;
-  return url;
+  return url
 }
 
-/**
- * Exports
- */
+// Exports
 
-module.exports = utils;
+module.exports = utils
