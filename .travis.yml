@@ -5,12 +5,13 @@ node_js:
   - "4"
   - "0.12.0"
 
+sudo: false
+
 notifications:
   email:
     on_success: always
     on_failure: always
 
-after_script: "cat ./coverage/lcov.info | coveralls"
+after_script: "npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls"
 
 aftersuccess:
-  - coveralls
