@@ -1,7 +1,7 @@
 /* global describe, it */
 
 var assert = require('assert')
-var utils = require('../utils')
+var utils = require('../lib/utils')
 
 // addParamToParams
 
