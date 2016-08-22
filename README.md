@@ -69,3 +69,7 @@ router.apply(app);
 [downloads-image]: http://img.shields.io/npm/dm/router-express.svg
 [downloads-url]: http://npm-stat.com/charts.html?package=router-express
 [npm-badge-png]: https://nodei.co/npm/router-express.png?downloads=true&stars=true&downloadRank=true
+
+
+[travis-image]: https://img.shields.io/travis/yasinaydin/router-express/master.svg
+[travis-url]: https://travis-ci.org/yasinaydin/router-express
