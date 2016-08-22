@@ -6,7 +6,6 @@
 [![dependency status][deps-svg]][deps-url]
 [![dev dependency status][dev-deps-svg]][dev-deps-url]
 
-
 ```js
 var express = require('express')
 var path = require('path')
@@ -23,7 +22,8 @@ var routes = [
   }
 ]
 
-var Router = new routerExpress(routes, path.join(__dirname, './modules'))
+global.Router = new routerExpress(routes, path.join(__dirname, './modules'))
+
 Router.bind(app)
 ```
 
