@@ -163,6 +163,25 @@ utils.getRegexParams = function (path, route) {
 }
 
 /**
+ * Injects middleware
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} middleware
+ * @param {Function} callback
+*/
+
+utils.injectMw = function (req, res, middleware, callback) {
+  if (middleware) {
+    middleware(req, res, function () {
+      callback(req, res)
+    })
+  } else {
+    callback(req, res)
+  }
+}
+
+/**
  * Groups routes by order type
  * @param {Array} routes
  * @param {Function} callback

@@ -176,6 +176,33 @@ describe('Unit::utils.getRegexParams', function () {
   })
 })
 
+// injectMiddleware
+
+describe('Unit::utils.injectMiddleware', function () {
+  var req = {foo: 'foo'}
+  var res = {bar: 'bar'}
+
+  it('should work without middleware', function (done) {
+    utils.injectMw(req, res, false, function (reqA, resA) {
+      assert.deepEqual(req, reqA)
+      assert.deepEqual(res, resA)
+      done()
+    })
+  })
+
+  var middleWare = function (req, res, callback) {
+    callback()
+  }
+
+  it('should work with middleware', function (done) {
+    utils.injectMw(req, res, middleWare, function (reqA, resA) {
+      assert.deepEqual(req, reqA)
+      assert.deepEqual(res, resA)
+      done()
+    })
+  })
+})
+
 // parseOrders
 
 describe('Unit::utils.parseOrders', function () {

@@ -111,7 +111,7 @@ RouterExpress.prototype.injectRoute = function (app, route, that) {
   app[method](bindUrl, function (req, res) {
     res.params = utils.fetchParams(req, route)
 
-    that.injectMw(req, res, that.middleware, function (req, res) {
+    utils.injectMw(req, res, that.middleware, function (req, res) {
       if (routeAction) {
         throw new Error('action is deprecated')
       }
@@ -127,25 +127,6 @@ RouterExpress.prototype.injectRoute = function (app, route, that) {
       }
     })
   })
-}
-
-/**
- * Injects middleware
- *
- * @param {Object} req
- * @param {Object} res
- * @param {Function} middleware
- * @param {Function} callback
-*/
-
-RouterExpress.prototype.injectMw = function (req, res, middleware, callback) {
-  if (middleware) {
-    middleware(req, res, function () {
-      callback(req, res)
-    })
-  } else {
-    callback(req, res)
-  }
 }
 
 RouterExpress.prototype.createUrlQuery = utils.createUrlQuery
