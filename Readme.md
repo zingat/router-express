@@ -5,6 +5,7 @@
 [![Build Status][travis-image]][travis-url] 
 [![dependency status][deps-svg]][deps-url]
 [![Code Climate](https://codeclimate.com/github/yasinaydin/router-express/badges/gpa.svg)](https://codeclimate.com/github/yasinaydin/router-express)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c2c014171cc8417eba0239160af12ad9)](https://www.codacy.com/app/yasin/router-express?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yasinaydin/router-express&amp;utm_campaign=Badge_Grade)
 
 ```js
 var express = require('express')
