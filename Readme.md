@@ -83,19 +83,16 @@ var another = Router.updateUrlWithParam(example, 'foo', undefined, res.params.ro
 ### Features
 
 * Get a route by its name (`route.name`) and access its properties
-* Create a url for a route by its name (`route.name`)
+* Create a url for a route by its name (`route.name`) - reverse routing
+* Update a url via providing parameters
+* Inject/update parameters of a url defined in regex (`regexUrl`, `regexParams`)
 * Combine all request parameters to `res.params` container
-* Current route is accessible in action middleware via `res.params.route`
+* Set default parameter values of `res.params` by defining them on `route.params.`
+* Access request's route object in action via `res.params.route`
+* Middleware function support before route action is called
 
-* middleware
-* auto routes
-
-* Able to create new urls easily
-* Name-based routing 
-* Reverse routing
-* Parameter injection and default parameters
-* HTTP methods support
-
+### Undocumented/ongoing
+* Automatic route search & combine
 
 
 [codacy-image]: https://api.codacy.com/project/badge/Grade/c2c014171cc8417eba0239160af12ad9
