@@ -13,7 +13,7 @@
 npm install --save router-express
 ```
 
-## Configure
+## Basic usage
 ```js
 var express = require('express')
 var routerExpress = require('router-express')
@@ -37,7 +37,7 @@ global.Router = new RouterExpress(routes)
 Router.bind(app)
 ```
 
-## Modules structure
+### Modules structure
 ```
 modules/
   static/
@@ -47,7 +47,7 @@ modules/
       index.js
 ```
 
-## Module file
+### Module file
 ```js
 // modules/static/home/index.js
 module.exports = function (req, res) {
@@ -55,10 +55,29 @@ module.exports = function (req, res) {
 }
 ```
 
-## URL methods
+### URL methods
 ```js
 var example = Router.createUrl('contact', {foo: 'bar'}) // -> /contact-us?foo=bar
 var another = Router.updateUrlWithParam(example, 'foo', undefined, res.params.route) // -> /contact-us
+```
+
+## Advanced usage
+
+### Route parameters
+```js
+{
+  actionFile: // @alias module
+  lastOrder:
+  modulesDir: // @default `path.join(__dirname, 'modules')`
+  method: // @default 'get'
+  module: // @alias actionFile
+  name:
+  order:
+  params: // @default {}
+  regexUrl: // @reverts to url
+  regexParams:
+  url:
+}
 ```
 
 ### Features
@@ -77,18 +96,7 @@ var another = Router.updateUrlWithParam(example, 'foo', undefined, res.params.ro
 * Parameter injection and default parameters
 * HTTP methods support
 
-### Default route parameters
 
-```js
-{
-  actionFile: module, // alias
-  modulesDir: path.join(__dirname, 'modules'),
-  method: 'get',
-  params: {},
-  regexUrl: undefined,
-  regexParams: undefined
-}
-```
 
 [codacy-image]: https://api.codacy.com/project/badge/Grade/c2c014171cc8417eba0239160af12ad9
 [codacy-url]: https://www.codacy.com/app/yasin/router-express
