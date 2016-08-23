@@ -2,7 +2,7 @@ var assert = require('assert')
 var express = require('express')
 var path = require('path')
 var request = require('supertest')
-var routerExpress = require('../lib/index')
+var RouterExpress = require('../lib/index')
 
 // Successful Inits
 
@@ -98,7 +98,7 @@ describe('Spec::url operations', function () {
   var routes = [route]
 
   var app = express()
-  var Router = new routerExpress(routes, path.join(__dirname, './actions'))
+  var Router = new RouterExpress(routes, path.join(__dirname, './actions'))
   Router.bind(app)
 
   describe('Router.createUrl', function () {

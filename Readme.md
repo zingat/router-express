@@ -33,7 +33,7 @@ var routes = [
   }
 ]
 
-global.Router = new routerExpress(routes)
+global.Router = new RouterExpress(routes)
 Router.bind(app)
 ```
 

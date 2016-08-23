@@ -1,6 +1,6 @@
 var express = require('express')
 var path = require('path')
-var routerExpress = require('../lib/index')
+var RouterExpress = require('../lib/index')
 
 var app = express()
 
@@ -17,7 +17,7 @@ var middleware = function (req, res) {
   return res.end('MID-STOP')
 }
 
-var Router = new routerExpress(routes)
+var Router = new RouterExpress(routes)
 Router.bind(app, middleware)
 
 var server = app.listen(3000)

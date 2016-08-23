@@ -1,6 +1,6 @@
 var express = require('express')
 var path = require('path')
-var routerExpress = require('../lib/index')
+var RouterExpress = require('../lib/index')
 
 var app = express()
 
@@ -19,7 +19,7 @@ var routes = [
   }
 ]
 
-var Router = new routerExpress(routes, path.join(__dirname, './actions'))
+var Router = new RouterExpress(routes, path.join(__dirname, './actions'))
 Router.bind(app)
 
 var server = app.listen(3000)
