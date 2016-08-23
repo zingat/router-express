@@ -10,7 +10,7 @@
 
 ## Install
 ```sh
-npm install router-express
+npm install --save router-express
 ```
 
 ## Configure
