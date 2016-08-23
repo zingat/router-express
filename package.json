@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "lint": "standard *.js",
-    "cover": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "test": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- -R spec --bail"
+    "cover": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha test/*_spec.js --report lcovonly -- -R spec && cat ./coverage/lcov.info | node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha test/*_spec.js -- -R spec --bail"
   },
   "pre-commit": [
     "lint",
@@ -42,10 +42,12 @@
   "devDependencies": {
     "assert": "^1.4.1",
     "coveralls": "^2.11.12",
+    "express": "^4.14.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.2.0",
     "pre-commit": "^1.1.3",
-    "standard": "^8.0.0-beta.5"
+    "standard": "^8.0.0-beta.5",
+    "supertest": "^2.0.0"
   }
 }
