@@ -91,10 +91,6 @@ var another = Router.updateUrlWithParam(example, 'foo', undefined, res.params.ro
 * Access request's route object in action via `res.params.route`
 * Middleware function support before route action is called
 
-### Future
-* Automatic route search & combine
-
-
 [codacy-image]: https://api.codacy.com/project/badge/Grade/c2c014171cc8417eba0239160af12ad9
 [codacy-url]: https://www.codacy.com/app/yasin/router-express
 [codeclimate-image]: https://codeclimate.com/github/yasinaydin/router-express/badges/gpa.svg
