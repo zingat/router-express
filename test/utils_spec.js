@@ -1,6 +1,7 @@
 /* global describe, it */
 
 var assert = require('assert')
+var path = require('path')
 var utils = require('../lib/utils')
 
 // addParamToParams
@@ -172,6 +173,25 @@ describe('Unit::utils.getRegexParams', function () {
 
   it('should get no regex params', function () {
     assert.deepEqual({param1: '', param2: ''}, utils.getRegexParams('/satilik', sampleRoute))
+  })
+})
+
+// getRoutes
+
+describe('Unit::utils.getRoutes', function () {
+  it('should get routes from a given module folder', function () {
+    var modulesDir = path.join(__dirname, 'actions')
+    assert.deepEqual(
+      utils.getRoutes(modulesDir),
+      [ { url: '/one', module: 'route/one' }, { url: '/', module: 'static/home' } ]
+    )
+  })
+
+  it('should get routes from default "modules" folder', function () {
+    assert.deepEqual(
+      utils.getRoutes(),
+      [ { url: '/', module: 'static/home' } ]
+    )
   })
 })
 
