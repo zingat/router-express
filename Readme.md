@@ -63,7 +63,13 @@ var another = Router.updateUrlWithParam(example, 'foo', undefined, res.params.ro
 
 ## Advanced usage
 
-### Route parameters
+### Access routes
+When you create your new RouterExpress instance, you can access all the routes via
+```js
+Router.routes
+```
+
+### List of route parameters
 ```js
 {
   actionFile: // @alias module
@@ -78,6 +84,16 @@ var another = Router.updateUrlWithParam(example, 'foo', undefined, res.params.ro
   regexParams:
   url:
 }
+```
+
+### Fetch route files automatically
+Put your `routes.json` or `routes.js` files in every folder in your `modules` folder, then you can fetch all your routes and merge them with
+```js
+var RouterExpress = require('router-express')
+
+var routes = RouterExpress.fetchRoutes()
+// or for your custom modules directory:
+var routes = RouterExpress.fetchRoutes('myModules')
 ```
 
 ### Features

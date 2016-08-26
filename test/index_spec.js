@@ -20,6 +20,16 @@ describe('Spec::Init', function () {
     })
   })
 
+  describe('Load routes automatically', function () {
+    var Router = new RouterExpress()
+    it('should run', function () {
+      assert.deepEqual(
+        Router.routes,
+        [ { url: '/', module: 'static/home' } ]
+      )
+    })
+  })
+
   describe('Custom modules dir', function () {
     var server
     before(function () { server = require('./serverModuleDir') })
@@ -87,7 +97,7 @@ describe('Spec::Init errors', function () {
   })
 })
 
-
+// url operations
 
 describe('Spec::url operations', function () {
   var route = {
@@ -126,5 +136,42 @@ describe('Spec::url operations', function () {
     it('should update with params array', function () {
       assert.strictEqual(Router.updateUrlWithParam('/', ['foo', 'bar'], 'baz', route), '/?foo=baz&bar=baz')
     })
+  })
+})
+
+// fetchRoutes
+
+describe('Spec::fetchRoutes', function () {
+  it('should get routes from a given module folder', function () {
+    var modulesDir = path.join(__dirname, 'actions')
+    assert.deepEqual(
+      RouterExpress.fetchRoutes(modulesDir),
+      [ { url: '/one', module: 'route/one' }, { url: '/', module: 'static/home' } ]
+    )
+  })
+
+  it('should get routes from default "modules" folder', function () {
+    assert.deepEqual(
+      RouterExpress.fetchRoutes(),
+      [ { url: '/', module: 'static/home' } ]
+    )
+  })
+})
+
+// routes
+
+describe('Spec::routes', function () {
+  it('should get all routes', function () {
+    var routes = [
+      {
+        url: '/something',
+        module: '/some/module'
+      }
+    ]
+    var Router = new RouterExpress(routes)
+    assert.deepEqual(
+      Router.routes,
+      routes
+    )
   })
 })

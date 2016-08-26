@@ -176,25 +176,6 @@ describe('Unit::utils.getRegexParams', function () {
   })
 })
 
-// getRoutes
-
-describe('Unit::utils.getRoutes', function () {
-  it('should get routes from a given module folder', function () {
-    var modulesDir = path.join(__dirname, 'actions')
-    assert.deepEqual(
-      utils.getRoutes(modulesDir),
-      [ { url: '/one', module: 'route/one' }, { url: '/', module: 'static/home' } ]
-    )
-  })
-
-  it('should get routes from default "modules" folder', function () {
-    assert.deepEqual(
-      utils.getRoutes(),
-      [ { url: '/', module: 'static/home' } ]
-    )
-  })
-})
-
 // injectMiddleware
 
 describe('Unit::utils.injectMiddleware', function () {
@@ -318,4 +299,3 @@ describe('Unit::utils.prepareUrl', function () {
     assert.strictEqual(utils.prepareUrl('/list-', {b: 2}), '/list?b=2')
   })
 })
-
